@@ -33,8 +33,13 @@ body {
     outline-offset: 2px !important;
 }
 
+
+[data-contrast="high-contrast"] .rounded-2xl,
+[data-contrast="high-contrast"] .rounded-xl,
 [data-contrast="high-contrast"] .rounded-lg,
-[data-contrast="high-contrast"] .rounded-md {
+[data-contrast="high-contrast"] .rounded-md ,
+[data-contrast="high-contrast"] .rounded-sm,
+[data-contrast="high-contrast"] .rounded-xs {
     border: 2px solid var(--text-color) !important;
 }
 
@@ -57,7 +62,11 @@ body {
     outline-offset: 2px !important;
 }
 
+[data-contrast="yellow-black"] .rounded-2xl,
+[data-contrast="yellow-black"] .rounded-xl,
 [data-contrast="yellow-black"] .rounded-lg,
-[data-contrast="yellow-black"] .rounded-md {
+[data-contrast="yellow-black"] .rounded-md,
+[data-contrast="yellow-black"] .rounded-sm,
+[data-contrast="yellow-black"] .rounded-xs {
     border: 2px solid var(--text-color) !important;
 }

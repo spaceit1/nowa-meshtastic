@@ -7,26 +7,50 @@ type ContrastMode = 'normal' | 'high-contrast' | 'yellow-black';
 const AccessibilityControls: React.FC = () => {
     const [contrastMode, setContrastMode] = useState<ContrastMode>('normal');
     const [fontSize, setFontSize] = useState(16);
+    const [isMac, setIsMac] = useState(false);
+
+    useEffect(() => {
+        // Sprawdź czy użytkownik jest na Macu
+        setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0);
+    }, []);
 
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
-            // Alt + C dla kontrastu
-            if (event.altKey && event.key === 'c') {
+            // Dla Windows/Linux: Alt + C
+            // Dla Mac: Control + C
+            const isContrastShortcut = isMac 
+                ? (event.ctrlKey && event.key === 'c')
+                : (event.altKey && event.key === 'c');
+
+            // Dla Windows/Linux: Alt + +
+            // Dla Mac: Control + +
+            const isIncreaseFontShortcut = isMac
+                ? (event.ctrlKey && event.key === '+')
+                : (event.altKey && event.key === '+');
+
+            // Dla Windows/Linux: Alt + -
+            // Dla Mac: Control + -
+            const isDecreaseFontShortcut = isMac
+                ? (event.ctrlKey && event.key === '-')
+                : (event.altKey && event.key === '-');
+
+            if (isContrastShortcut) {
+                event.preventDefault(); // Zapobiegaj domyślnej akcji (np. kopiowaniu)
                 handleContrastChange();
             }
-            // Alt + + dla zwiększenia czcionki
-            if (event.altKey && event.key === '+') {
+            if (isIncreaseFontShortcut) {
+                event.preventDefault();
                 handleFontSizeChange(true);
             }
-            // Alt + - dla zmniejszenia czcionki
-            if (event.altKey && event.key === '-') {
+            if (isDecreaseFontShortcut) {
+                event.preventDefault();
                 handleFontSizeChange(false);
             }
         };
 
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [contrastMode, fontSize]);
+    }, [contrastMode, fontSize, isMac]);
 
     const handleContrastChange = () => {
         const modes: ContrastMode[] = ['normal', 'high-contrast', 'yellow-black'];
@@ -35,7 +59,6 @@ const AccessibilityControls: React.FC = () => {
         const newMode = modes[nextIndex];
         setContrastMode(newMode);
 
-        // Zastosuj tryb kontrastu poprzez atrybut data-contrast
         document.documentElement.setAttribute('data-contrast', newMode);
     };
 
@@ -47,6 +70,10 @@ const AccessibilityControls: React.FC = () => {
         }
     };
 
+    const getShortcutText = (key: string) => {
+        return isMac ? `⌃${key}` : `Alt + ${key}`;
+    };
+
     return (
         <div className="flex items-center gap-3" role="toolbar" aria-label="Kontrolki dostępności">
             <button
@@ -54,7 +81,7 @@ const AccessibilityControls: React.FC = () => {
                 className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 aria-label="Zmień kontrast"
                 aria-pressed={contrastMode !== 'normal'}
-                title="Zmień kontrast (Alt + C)"
+                title={`Zmień kontrast (${getShortcutText('C')})`}
             >
                 <MdContrast className="w-5 h-5 text-blue-700 dark:text-blue-400" />
             </button>
@@ -63,7 +90,7 @@ const AccessibilityControls: React.FC = () => {
                     onClick={() => handleFontSizeChange(false)}
                     className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     aria-label="Zmniejsz rozmiar czcionki"
-                    title="Zmniejsz rozmiar czcionki (Alt + -)"
+                    title={`Zmniejsz rozmiar czcionki (${getShortcutText('-')})`}
                 >
                     <MdFormatSize className="size-4 text-blue-700 dark:text-blue-400" />
                     <FiArrowDown className="size-4 text-blue-700 dark:text-blue-400" />
@@ -72,7 +99,7 @@ const AccessibilityControls: React.FC = () => {
                     onClick={() => handleFontSizeChange(true)}
                     className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     aria-label="Zwiększ rozmiar czcionki"
-                    title="Zwiększ rozmiar czcionki (Alt + +)"
+                    title={`Zwiększ rozmiar czcionki (${getShortcutText('+')})`}
                 >
                     <MdFormatSize className="size-5 text-blue-700 dark:text-blue-400" />
                     <FiArrowUp className="size-5 text-blue-700 dark:text-blue-400" />
