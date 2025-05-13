@@ -12,6 +12,8 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import LanguageSelector from "../../components/ui/LanguageSelector";
 import FeatureCard from "../../components/ui/FeatureCard";
+import Button from "../../components/ui/Button";
+import Alert from "../../components/ui/Alert";
 
 interface Feature {
     icon: React.ElementType;
@@ -107,25 +109,18 @@ const LandingPage: React.FC = () => {
                                 "A reliable, multilingual, and fully accessible communication platform for emergencies, disasters, and critical situations."}
                         </p>
 
-                        {/* CTA Button */}
-                        <Link
+                        <Button
                             to="/user"
-                            className="inline-block w-full h-[60px] px-6 text-lg font-bold mb-4 
-                         rounded-md shadow-md bg-blue-500 text-white
-                         hover:transform hover:-translate-y-0.5 hover:shadow-lg
-                         active:transform active:translate-y-0
-                         transition-all duration-200"
+                            variant="primary"
+                            size="lg"
+                            fullWidth
+                            icon={FiUsers}
+                            iconPosition="left"
+                            className="mb-4"
                         >
-                            <div className="w-full h-full flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <FiUsers className="w-5 h-5 mr-3" />
-                                    <span>{t("enterUserApp")}</span>
-                                </div>
-                                <FiArrowRight className="w-5 h-5" />
-                            </div>
-                        </Link>
+                            {t("enterUserApp")}
+                        </Button>
 
-                        {/* Secondary CTA for Admin */}
                         <Link
                             to="/admin"
                             className="flex items-center text-purple-500 font-medium hover:text-purple-600 hover:no-underline"
@@ -137,48 +132,27 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* VStack for the rest of the content */}
                 <div className="flex flex-col items-center text-center mb-10 space-y-8">
-                    {/* Enhanced Emergency status alert */}
-                    <div className="w-full bg-red-600 text-white p-3 md:p-5 rounded-lg shadow-lg relative overflow-hidden">
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-white bg-opacity-50"></div>
-                        <div className="flex flex-col sm:flex-row items-center sm:items-start">
-                            <FiAlertTriangle className="w-8 h-8 md:w-10 md:h-10 text-white mr-0 sm:mr-4 mb-2 sm:mb-0" />
-                            <div className="text-center sm:text-left">
-                                <div className="flex flex-col sm:flex-row mb-1 gap-2 items-center sm:items-start">
-                                    <span className="bg-white text-red-600 text-xs md:text-sm font-bold px-2 py-1 rounded-full">
-                                        {t("activeEmergencyAlert") || "Active Emergency Alert"}
-                                    </span>
-                                    <span className="bg-white text-red-600 text-xs px-2 rounded-full">
-                                        {new Date().toLocaleDateString()}
-                                    </span>
-                                </div>
-                                <p className="font-bold text-md md:text-lg mb-1 leading-relaxed">
-                                    {t("checkUserAppForDetails") ||
-                                        "Check the user application for latest updates and instructions."}
-                                </p>
-                                <p className="text-xs md:text-sm leading-relaxed">
-                                    {t("emergencyInstructions") ||
-                                        "Follow official instructions and keep your device charged. Emergency services are responding."}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <Alert
+                        variant="danger"
+                        title={t("activeEmergencyAlert") || "Active Emergency Alert"}
+                        date={new Date().toLocaleDateString()}
+                        description={t("checkUserAppForDetails") || "Check the user application for latest updates and instructions."}
+                    >
+                        {t("emergencyInstructions") || "Follow official instructions and keep your device charged. Emergency services are responding."}
+                    </Alert>
 
-                    {/* Additional CTA above Key Features */}
                     <div className="w-full max-w-md mx-auto my-6">
-                        <Link
+                        <Button
                             to="/user"
-                            className="flex items-center justify-between w-full h-[60px] px-6 text-lg 
-                       font-bold rounded-md shadow-md bg-blue-500 text-white
-                       hover:transform hover:-translate-y-0.5 hover:shadow-lg
-                       active:transform active:translate-y-0
-                       transition-all duration-200"
+                            variant="primary"
+                            size="lg"
+                            fullWidth
+                            icon={FiUsers}
+                            iconPosition="left"
                         >
-                            <FiUsers className="w-5 h-5" />
-                            <span>{t("enterUserApp")}</span>
-                            <FiArrowRight className="w-5 h-5" />
-                        </Link>
+                            {t("enterUserApp")}
+                        </Button>
                     </div>
                 </div>
 
