@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext } from "react";
 import type { ReactNode } from "react";
+import { translations } from "./translations";
+import type { TranslationKey } from "./translations";
 
 interface Language {
    code: string;
@@ -9,41 +11,13 @@ interface Language {
 interface LanguageContextType {
    language: string;
    changeLanguage: (lang: string) => void;
-   t: (key: string) => string;
+   t: (key: TranslationKey) => string;
    availableLanguages: Language[];
 }
 
 interface LanguageProviderProps {
    children: ReactNode;
 }
-
-// Przykładowe translations - w prawdziwej aplikacji byłyby one bardziej rozbudowane
-const translations: Record<string, Record<string, string>> = {
-   en: {
-      appTitle: "Emergency Mesh Communication",
-      userDashboard: "User Dashboard",
-      adminDashboard: "Admin Dashboard",
-      // ... inne tłumaczenia
-   },
-   pl: {
-      appTitle: "System Komunikacji Awaryjnej",
-      userDashboard: "Panel Użytkownika",
-      adminDashboard: "Panel Administratora",
-      // ... inne tłumaczenia
-   },
-   uk: {
-      appTitle: "Система Аварійного Зв'язку",
-      userDashboard: "Панель Користувача",
-      adminDashboard: "Панель Адміністратора",
-      // ... inne tłumaczenia
-   },
-   ru: {
-      appTitle: "Система Аварийной Связи",
-      userDashboard: "Панель Пользователя",
-      adminDashboard: "Панель Администратора",
-      // ... inne tłumaczenia
-   },
-};
 
 const availableLanguages: Language[] = [
    { code: "en", name: "English" },
@@ -82,8 +56,10 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
       localStorage.setItem("language", lang);
    };
 
-   const t = (key: string): string => {
-      return translations[language]?.[key] || translations["en"]?.[key] || key;
+   const t = (key: TranslationKey): string => {
+      return translations[language as keyof typeof translations]?.[key] || 
+             translations.en[key] || 
+             key;
    };
 
    const value = {

@@ -44,7 +44,7 @@ const LandingPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-white dark:bg-gray-900">
             {/* Header with language and theme switchers */}
             <header className="py-4 px-4 bg-blue-50 dark:bg-blue-900">
                 <div className="flex justify-between items-center">
@@ -131,7 +131,7 @@ const LandingPage: React.FC = () => {
                             className="flex items-center text-purple-500 font-medium hover:text-purple-600 hover:no-underline"
                         >
                             <FiShield className="w-4 h-4 mr-2" />
-                            <span>{t("enterAdminPanel")}</span>
+                            <span>{t("enterAdminApp")}</span>
                             <FiArrowRight className="w-4 h-4 ml-2" />
                         </Link>
                     </div>
