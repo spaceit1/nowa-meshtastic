@@ -63,9 +63,11 @@ const Menu: React.FC<MenuProps> = ({
                         {adminDashboardText}
                     </Link>
 
-                    <LanguageSelector />
-                    <ThemeToggle />
-                    <AccessibilityControls />
+                    <div className="flex items-center gap-3">
+                        <LanguageSelector />
+                        <ThemeToggle />
+                        <AccessibilityControls />
+                    </div>
                 </div>
 
                 {/* Mobile menu button */}

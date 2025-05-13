@@ -2,6 +2,8 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@custom-variant contrast (&:where(.contrast, .contrast *));
+
 :root {
     --text-color: inherit;
     --bg-color: inherit;
@@ -18,8 +20,44 @@ body {
     --bg-color: #000000;
 }
 
+[data-contrast="high-contrast"] * {
+    color: var(--text-color) !important;
+    background-color: var(--bg-color) !important;
+    border-color: var(--text-color) !important;
+}
+
+[data-contrast="high-contrast"] button,
+[data-contrast="high-contrast"] a {
+    border: 2px solid var(--text-color) !important;
+    outline: 2px solid var(--text-color) !important;
+    outline-offset: 2px !important;
+}
+
+[data-contrast="high-contrast"] .rounded-lg,
+[data-contrast="high-contrast"] .rounded-md {
+    border: 2px solid var(--text-color) !important;
+}
+
 /* Style dla trybu żółto-czarnego */
 [data-contrast="yellow-black"] {
     --text-color: #000000;
     --bg-color: #ffff00;
+}
+
+[data-contrast="yellow-black"] * {
+    color: var(--text-color) !important;
+    background-color: var(--bg-color) !important;
+    border-color: var(--text-color) !important;
+}
+
+[data-contrast="yellow-black"] button,
+[data-contrast="yellow-black"] a {
+    border: 2px solid var(--text-color) !important;
+    outline: 2px solid var(--text-color) !important;
+    outline-offset: 2px !important;
+}
+
+[data-contrast="yellow-black"] .rounded-lg,
+[data-contrast="yellow-black"] .rounded-md {
+    border: 2px solid var(--text-color) !important;
 }
