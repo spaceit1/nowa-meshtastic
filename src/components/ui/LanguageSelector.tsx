@@ -1,6 +1,6 @@
 import React from "react";
 import { FiGlobe } from "react-icons/fi";
-import { useLanguage } from "../../i18n/LanguageContext.ts";
+import { useLanguage } from "../../i18n/LanguageContext.tsx";
 
 const LanguageSelector: React.FC = () => {
     const { language, changeLanguage, availableLanguages } = useLanguage();
