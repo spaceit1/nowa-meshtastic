@@ -6,12 +6,13 @@ import {
     FiRadio,
     FiInfo,
     FiAlertTriangle,
-    FiArrowRight
+    FiArrowRight,
+    FiWifiOff
 } from "react-icons/fi";
 import { useLanguage } from "../../i18n/LanguageContext";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import LanguageSelector from "../../components/ui/LanguageSelector";
-import FeatureCard from "../../components/ui/FeatureCard";
+import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 
@@ -158,35 +159,34 @@ const LandingPage: React.FC = () => {
 
                 {/* Key features */}
                 <div className="mb-10">
-                    <h3 className="text-lg font-bold mb-5 text-center">
+                    <h3 className="text-lg font-bold mb-5 text-center text-gray-800 dark:text-gray-100">
                         {t("keyFeatures") || "Key Features"}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {features.map((feature, idx) => (
-                            <FeatureCard
+                            <Card
                                 key={idx}
                                 icon={feature.icon}
                                 title={feature.title}
                                 description={feature.description}
+                                variant="feature"
                             />
                         ))}
                     </div>
                 </div>
 
                 {/* Offline instructions */}
-                <div className="p-5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 mb-6">
-                    <h3 className="font-bold text-md mb-3">
-                        {t("offlineAccess") || "Offline Access Instructions"}
-                    </h3>
-                    <p className="mb-3">
-                        {t("offlineInstructions") || "This app can work offline when installed. To install:"}
-                    </p>
-                    <div className="flex flex-col items-start space-y-2">
-                        <p>• {t("offlineStep1") || "Open app in Chrome or Safari"}</p>
-                        <p>• {t("offlineStep2") || 'Open browser menu and select "Add to Home Screen"'}</p>
-                        <p>• {t("offlineStep3") || "The app will now be available even without internet"}</p>
-                    </div>
-                </div>
+                <Card
+                    icon={FiWifiOff}
+                    title={t("offlineAccess") || "Offline Access Instructions"}
+                    description={t("offlineInstructions") || "This app can work offline when installed. To install:"}
+                    steps={[
+                        t("offlineStep1") || "Open app in Chrome or Safari",
+                        t("offlineStep2") || 'Open browser menu and select "Add to Home Screen"',
+                        t("offlineStep3") || "The app will now be available even without internet"
+                    ]}
+                    variant="instructions"
+                />
             </div>
 
             {/* Footer */}

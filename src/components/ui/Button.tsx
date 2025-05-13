@@ -28,9 +28,9 @@ const Button: React.FC<ButtonProps> = ({
     const baseStyles = 'flex items-center justify-center font-bold rounded-md shadow-md transition-all duration-200';
     
     const variantStyles = {
-        primary: 'bg-blue-500 text-white hover:bg-blue-600 hover:transform hover:-translate-y-0.5 hover:shadow-lg active:transform active:translate-y-0',
-        secondary: 'bg-purple-500 text-white hover:bg-purple-600 hover:transform hover:-translate-y-0.5 hover:shadow-lg active:transform active:translate-y-0',
-        danger: 'bg-red-500 text-white hover:bg-red-600 hover:transform hover:-translate-y-0.5 hover:shadow-lg active:transform active:translate-y-0',
+        primary: 'bg-blue-700 text-white hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 hover:transform hover:-translate-y-0.5 hover:shadow-lg active:transform active:translate-y-0',
+        secondary: 'bg-purple-700 text-white hover:bg-purple-800 dark:bg-purple-600 dark:hover:bg-purple-700 hover:transform hover:-translate-y-0.5 hover:shadow-lg active:transform active:translate-y-0',
+        danger: 'bg-red-700 text-white hover:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 hover:transform hover:-translate-y-0.5 hover:shadow-lg active:transform active:translate-y-0',
     };
 
     const sizeStyles = {

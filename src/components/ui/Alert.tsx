@@ -21,28 +21,28 @@ const Alert: React.FC<AlertProps> = ({
 }) => {
     const variantStyles = {
         danger: {
-            container: 'bg-red-600 text-white',
+            container: 'bg-red-700 text-white dark:bg-red-800',
             icon: FiAlertTriangle,
             badgeVariant: 'red' as const,
-            lineColor: 'bg-red-300 bg-opacity-50'
+            lineColor: 'bg-red-400 dark:bg-red-500'
         },
         warning: {
-            container: 'bg-yellow-300 text-black',
+            container: 'bg-yellow-600 text-white dark:bg-yellow-700',
             icon: FiAlertCircle,
             badgeVariant: 'yellow' as const,
-            lineColor: 'bg-yellow-300 bg-opacity-50'
+            lineColor: 'bg-yellow-400 dark:bg-yellow-500'
         },
         info: {
-            container: 'bg-blue-500 text-white',
+            container: 'bg-blue-700 text-white dark:bg-blue-800',
             icon: FiInfo,
             badgeVariant: 'blue' as const,
-            lineColor: 'bg-blue-300 bg-opacity-50'
+            lineColor: 'bg-blue-400 dark:bg-blue-500'
         },
         success: {
-            container: 'bg-green-500 text-white',
+            container: 'bg-green-700 text-white dark:bg-green-800',
             icon: FiCheckCircle,
             badgeVariant: 'emerald' as const,
-            lineColor: 'bg-green-300 bg-opacity-50'
+            lineColor: 'bg-green-400 dark:bg-green-500'
         }
     };
 
