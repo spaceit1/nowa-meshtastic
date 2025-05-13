@@ -1,3 +1,25 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    --text-color: inherit;
+    --bg-color: inherit;
+}
+
+body {
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+
+/* Style dla trybu wysokiego kontrastu */
+[data-contrast="high-contrast"] {
+    --text-color: #ffffff;
+    --bg-color: #000000;
+}
+
+/* Style dla trybu żółto-czarnego */
+[data-contrast="yellow-black"] {
+    --text-color: #000000;
+    --bg-color: #ffff00;
+}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiRadio, FiUsers, FiShield, FiMenu, FiX, FiGlobe, FiSun, FiMoon } from "react-icons/fi";
 import LanguageSelector from "./LanguageSelector";
 import ThemeToggle from "./ThemeToggle";
+import AccessibilityControls from "./AccessibilityControls";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useTheme } from "../../hooks/useTheme";
 
@@ -63,7 +64,8 @@ const Menu: React.FC<MenuProps> = ({
                     </Link>
 
                     <LanguageSelector />
-                    <ThemeToggle /> 
+                    <ThemeToggle />
+                    <AccessibilityControls />
                 </div>
 
                 {/* Mobile menu button */}
@@ -152,6 +154,9 @@ const Menu: React.FC<MenuProps> = ({
                                         {isDarkMode ? t("darkMode") : t("lightMode")}
                                     </button>
                                 </div>
+
+                                {/* Accessibility Controls */}
+                                <AccessibilityControls />
                             </div>
                         </div>
                     </nav>
