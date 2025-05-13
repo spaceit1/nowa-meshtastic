@@ -1,10 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiGlobe } from "react-icons/fi";
 import { useLanguage } from "../../i18n/LanguageContext.tsx";
 
 const LanguageSelector: React.FC = () => {
     const { language, changeLanguage, availableLanguages } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('click', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [isOpen]);
 
     const handleLanguageChange = (langCode: string) => {
         changeLanguage(langCode);
@@ -12,7 +29,7 @@ const LanguageSelector: React.FC = () => {
     };
 
     return (
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
             <button
                 className="flex items-center p-2 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
                 aria-label="Change language"

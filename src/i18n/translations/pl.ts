@@ -22,5 +22,8 @@ export const pl = {
     offlineStep1: "Otwórz aplikację w Chrome lub Safari",
     offlineStep2: 'Otwórz menu przeglądarki i wybierz "Dodaj do ekranu głównego"',
     offlineStep3: "Aplikacja będzie teraz dostępna nawet bez internetu",
-    footerText: "© 2025 System Komunikacji Awaryjnej Mesh"
+    footerText: "© 2025 System Komunikacji Awaryjnej Mesh",
+    footerHackathonInfo: "Projekt powstał podczas <a href='https://civil42.pl/' target='_blank' rel='noopener noreferrer' class='text-blue-600 dark:text-blue-400 hover:underline'>CYVIL42 Hackathon 2025</a>",
+    darkMode: "Tryb Ciemny",
+    lightMode: "Tryb Jasny"
 } as const; 

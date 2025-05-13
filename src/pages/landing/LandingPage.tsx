@@ -5,16 +5,15 @@ import {
     FiShield,
     FiRadio,
     FiInfo,
-    FiAlertTriangle,
     FiArrowRight,
     FiWifiOff
 } from "react-icons/fi";
 import { useLanguage } from "../../i18n/LanguageContext";
-import ThemeToggle from "../../components/ui/ThemeToggle";
-import LanguageSelector from "../../components/ui/LanguageSelector";
+import Menu from "../../components/ui/Menu";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
+import Footer from "../../components/ui/Footer";
 
 interface Feature {
     icon: React.ElementType;
@@ -48,50 +47,14 @@ const LandingPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900">
-            {/* Header with language and theme switchers */}
-            <header className="py-4 px-4 bg-blue-50 dark:bg-blue-900">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <FiRadio className="w-6 h-6 text-blue-500" />
-                        <h1 className="text-md md:text-lg font-bold text-blue-500">
-                            {t("appTitle")}
-                        </h1>
-                    </div>
+            <Menu
+                appTitle={t("appTitle")}
+                userDashboardText={t("userDashboard")}
+                adminDashboardText={t("adminDashboard")}
+            />
 
-                    {/* Spacer flex to push items to the right */}
-                    <div className="flex-1"></div>
-
-                    {/* Navigation links moved more to the right */}
-                    <div className="hidden md:flex gap-6 items-center mr-6">
-                        <Link
-                            to="/user"
-                            className="font-medium text-blue-600 hover:text-blue-800 hover:no-underline flex items-center"
-                        >
-                            <FiUsers className="w-4 h-4 mr-2" />
-                            {t("userDashboard")}
-                        </Link>
-
-                        <Link
-                            to="/admin"
-                            className="font-medium text-purple-600 hover:text-purple-800 hover:no-underline flex items-center"
-                        >
-                            <FiShield className="w-4 h-4 mr-2" />
-                            {t("adminDashboard")}
-                        </Link>
-                    </div>
-
-                    <div className="flex gap-2">
-                        <LanguageSelector />
-                        <ThemeToggle />
-                    </div>
-                </div>
-            </header>
-
-            {/* Main content */}
             <div className="container mx-auto py-6 px-4 max-w-7xl">
-                {/* Hero section with image on top for mobile, side-by-side on desktop */}
                 <div className="flex flex-col lg:flex-row mb-10 rounded-xl overflow-hidden shadow-xl bg-white dark:bg-gray-800">
-                    {/* Image (top on mobile, right on desktop) */}
                     <div className="h-[250px] md:h-[300px] lg:h-auto relative flex-1 order-1 lg:order-2">
                         <img
                             src="/main-photo.png"
@@ -100,7 +63,6 @@ const LandingPage: React.FC = () => {
                         />
                     </div>
 
-                    {/* Text content (below image on mobile, left on desktop) */}
                     <div className="flex flex-col justify-center p-6 md:p-10 flex-1 z-10 order-2 lg:order-1">
                         <h2 className="text-xl md:text-2xl font-bold mb-3 text-gray-800 dark:text-white">
                             {t("landingHeroTitle") || "Emergency Mesh Communication"}
@@ -157,7 +119,6 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Key features */}
                 <div className="mb-10">
                     <h3 className="text-lg font-bold mb-5 text-center text-gray-800 dark:text-gray-100">
                         {t("keyFeatures") || "Key Features"}
@@ -175,7 +136,6 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Offline instructions */}
                 <Card
                     icon={FiWifiOff}
                     title={t("offlineAccess") || "Offline Access Instructions"}
@@ -190,11 +150,7 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <footer className="py-4 px-4 bg-blue-50 dark:bg-blue-900 text-center">
-                <p className="text-sm">
-                    {t("footerText") || "© 2025 Emergency Mesh Communication System"}
-                </p>
-            </footer>
+            <Footer />
         </div>
     );
 };

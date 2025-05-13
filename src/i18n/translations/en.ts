@@ -22,5 +22,8 @@ export const en = {
     offlineStep1: "Open app in Chrome or Safari",
     offlineStep2: 'Open browser menu and select "Add to Home Screen"',
     offlineStep3: "The app will now be available even without internet",
-    footerText: "© 2025 Emergency Mesh Communication System"
+    footerText: "© 2025 Emergency Mesh Communication System",
+    footerHackathonInfo: "Project created during <a href='https://civil42.pl/' target='_blank' rel='noopener noreferrer' class='text-blue-600 dark:text-blue-400 hover:underline'>CYVIL42 Hackathon 2025</a>",
+    lightMode: "Light Mode",
+    darkMode: "Dark Mode"
 } as const; 

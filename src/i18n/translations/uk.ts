@@ -22,5 +22,8 @@ export const uk = {
     offlineStep1: "Відкрийте додаток у Chrome або Safari",
     offlineStep2: 'Відкрийте меню браузера та виберіть "Додати на головний екран"',
     offlineStep3: "Додаток тепер буде доступний навіть без інтернету",
-    footerText: "© 2025 Система Аварійного Зв'язку Mesh"
+    footerText: "© 2025 Система Аварійного Зв'язку Mesh",
+    footerHackathonInfo: "Проект створено під час <a href='https://civil42.pl/' target='_blank' rel='noopener noreferrer' class='text-blue-600 dark:text-blue-400 hover:underline'>CYVIL42 Hackathon 2025</a>",
+    darkMode: "Темний режим",
+    lightMode: "Світлий режим"
 } as const; 
