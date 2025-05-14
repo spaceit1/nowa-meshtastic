@@ -1,6 +1,6 @@
 import React from 'react';
 
-type BadgeVariant = 
+export type BadgeVariant = 
     | 'slate' | 'gray' | 'zinc' | 'neutral' | 'stone'
     | 'red' | 'orange' | 'amber' | 'yellow' | 'lime'
     | 'green' | 'emerald' | 'teal' | 'cyan' | 'sky'

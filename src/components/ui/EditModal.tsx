@@ -8,6 +8,12 @@ interface EditModalProps {
     title: string;
     children: React.ReactNode;
     isLoading?: boolean;
+    additionalButton?: {
+        icon: React.ReactNode;
+        onClick: () => void;
+        disabled?: boolean;
+        children: React.ReactNode;
+    };
 }
 
 const EditModal: React.FC<EditModalProps> = ({
@@ -16,7 +22,8 @@ const EditModal: React.FC<EditModalProps> = ({
     onSave,
     title,
     children,
-    isLoading = false
+    isLoading = false,
+    additionalButton
 }) => {
     if (!isOpen) return null;
 
@@ -36,6 +43,17 @@ const EditModal: React.FC<EditModalProps> = ({
                     {children}
                 </div>
                 <div className="flex justify-end space-x-3">
+                    {additionalButton && (
+                        <Button
+                            variant="secondary"
+                            onClick={additionalButton.onClick}
+                            disabled={additionalButton.disabled}
+                            className="flex items-center gap-2"
+                        >
+                            {additionalButton.icon}
+                            {additionalButton.children}
+                        </Button>
+                    )}
                     <Button variant="secondary" onClick={onClose}>
                         Anuluj
                     </Button>

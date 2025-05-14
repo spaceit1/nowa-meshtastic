@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiArrowRight, FiGlobe } from 'react-icons/fi';
+import { FiPlus, FiGlobe, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
@@ -9,6 +9,9 @@ import Card from '../ui/Card';
 import EditModal from '../ui/EditModal';
 import DeleteConfirmationModal from '../ui/DeleteConfirmationModal';
 import type { Category } from '../../types/category';
+import MoreMenu from '../ui/MoreMenu';
+import Badge from '../ui/Badge';
+import type{ BadgeVariant } from '../ui/Badge';
 
 interface Template {
   id: string;
@@ -45,6 +48,7 @@ const TemplatesPanel: React.FC = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
@@ -312,18 +316,18 @@ const TemplatesPanel: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const getPriorityColor = (priority: string): string => {
+  const getPriorityColor = (priority: string): BadgeVariant => {
     switch (priority) {
       case "critical":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        return "red";
       case "high":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
+        return "orange";
       case "medium":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        return "blue";
       case "low":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        return "green";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+        return "gray";
     }
   };
 
@@ -333,95 +337,16 @@ const TemplatesPanel: React.FC = () => {
 
   return (
     <div className="space-y-6 mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label={t('templateNamePl')}
-          value={addFormData.name_pl}
-          onChange={(e) => setAddFormData({ ...addFormData, name_pl: e.target.value })}
-          required
-          placeholder={t('enterTemplateNamePl')}
-          button={{
-            icon: <FiGlobe className="w-4 h-4" />,
-            onClick: handleAutoTranslate,
-            disabled: !addFormData.name_pl || !addFormData.content_pl || isTranslating,
-            children: isTranslating ? t('translating') : t('translate')
-          }}
-        />
-        <Input
-          label={t('templateNameEn')}
-          value={addFormData.name_en}
-          onChange={(e) => setAddFormData({ ...addFormData, name_en: e.target.value })}
-          placeholder={t('enterTemplateNameEn')}
-        />
-        <Input
-          label={t('templateNameUk')}
-          value={addFormData.name_uk}
-          onChange={(e) => setAddFormData({ ...addFormData, name_uk: e.target.value })}
-          placeholder={t('enterTemplateNameUk')}
-        />
-        <Input
-          label={t('templateNameRu')}
-          value={addFormData.name_ru}
-          onChange={(e) => setAddFormData({ ...addFormData, name_ru: e.target.value })}
-          placeholder={t('enterTemplateNameRu')}
-        />
-        <Input
-          label={t('templateContentPl')}
-          value={addFormData.content_pl}
-          onChange={(e) => setAddFormData({ ...addFormData, content_pl: e.target.value })}
-          required
-          placeholder={t('enterTemplateContentPl')}
-        />
-        <Input
-          label={t('templateContentEn')}
-          value={addFormData.content_en}
-          onChange={(e) => setAddFormData({ ...addFormData, content_en: e.target.value })}
-          placeholder={t('enterTemplateContentEn')}
-        />
-        <Input
-          label={t('templateContentUk')}
-          value={addFormData.content_uk}
-          onChange={(e) => setAddFormData({ ...addFormData, content_uk: e.target.value })}
-          placeholder={t('enterTemplateContentUk')}
-        />
-        <Input
-          label={t('templateContentRu')}
-          value={addFormData.content_ru}
-          onChange={(e) => setAddFormData({ ...addFormData, content_ru: e.target.value })}
-          placeholder={t('enterTemplateContentRu')}
-        />
-        <select
-          value={addFormData.category_id}
-          onChange={(e) => setAddFormData({ ...addFormData, category_id: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-          required
-        >
-          <option value="">{t('selectCategory')}</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name_pl}
-            </option>
-          ))}
-        </select>
-        <select
-          value={addFormData.priority}
-          onChange={(e) => setAddFormData({ ...addFormData, priority: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-        >
-          <option value="low">{t('priorityLow')}</option>
-          <option value="medium">{t('priorityMedium')}</option>
-          <option value="high">{t('priorityHigh')}</option>
-          <option value="critical">{t('priorityCritical')}</option>
-        </select>
+      <div className="flex justify-end">
         <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+          size="sm"
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
         >
           <FiPlus className="w-5 h-5" />
-          {isSubmitting ? t('adding') : t('addTemplate')}
+          {t('addTemplate')}
         </Button>
-      </form>
+      </div>
 
       <Card
         variant="default"
@@ -445,22 +370,23 @@ const TemplatesPanel: React.FC = () => {
                   {t('content')}: {template.content_pl}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(template.priority)}`}>
-                  {t(template.priority)}
-                </span>
-                <button
-                  className="px-3 py-1 text-sm border border-blue-500 text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-md"
-                  onClick={() => openEditModal(template)}
-                >
-                  {t('edit')}
-                </button>
-                <button
-                  className="px-3 py-1 text-sm text-red-500 hover:bg-red-100 dark:hover:bg-red-900 rounded-md"
-                  onClick={() => openDeleteModal(template)}
-                >
-                  {t('delete')}
-                </button>
+              <div className="flex items-center gap-2 mb-auto">
+                <Badge variant={getPriorityColor(template.priority)}>{t(template.priority)}</Badge>
+                <MoreMenu
+                  items={[
+                    {
+                      label: t('edit'),
+                      icon: <FiEdit2 />,
+                      onClick: () => openEditModal(template)
+                    },
+                    {
+                      label: t('delete'),
+                      icon: <FiTrash2 />,
+                      onClick: () => openDeleteModal(template),
+                      variant: 'danger'
+                    }
+                  ]}
+                />
               </div>
             </div>
           ))}
@@ -468,26 +394,126 @@ const TemplatesPanel: React.FC = () => {
       </Card>
 
       <EditModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleSubmit}
+        title={t('addTemplate')}
+        isLoading={isSubmitting}
+        additionalButton={{
+          icon: <FiGlobe className="w-4 h-4" />,
+          onClick: handleAutoTranslate,
+          disabled: !addFormData.name_pl || !addFormData.content_pl || isTranslating,
+          children: isTranslating ? t('translating') : t('translate')
+        }}
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <Input
+              label={t('templateNamePl')}
+              value={addFormData.name_pl}
+              onChange={(e) => setAddFormData({ ...addFormData, name_pl: e.target.value })}
+              required
+              placeholder={t('enterTemplateNamePl')}
+            />
+          </div>
+          <Input
+            label={t('templateNameEn')}
+            value={addFormData.name_en}
+            onChange={(e) => setAddFormData({ ...addFormData, name_en: e.target.value })}
+            placeholder={t('enterTemplateNameEn')}
+          />
+          <Input
+            label={t('templateNameUk')}
+            value={addFormData.name_uk}
+            onChange={(e) => setAddFormData({ ...addFormData, name_uk: e.target.value })}
+            placeholder={t('enterTemplateNameUk')}
+          />
+          <Input
+            label={t('templateNameRu')}
+            value={addFormData.name_ru}
+            onChange={(e) => setAddFormData({ ...addFormData, name_ru: e.target.value })}
+            placeholder={t('enterTemplateNameRu')}
+          />
+          <div className="col-span-2">
+            <Input
+              label={t('templateContentPl')}
+              value={addFormData.content_pl}
+              onChange={(e) => setAddFormData({ ...addFormData, content_pl: e.target.value })}
+              required
+              placeholder={t('enterTemplateContentPl')}
+            />
+          </div>
+          <Input
+            label={t('templateContentEn')}
+            value={addFormData.content_en}
+            onChange={(e) => setAddFormData({ ...addFormData, content_en: e.target.value })}
+            placeholder={t('enterTemplateContentEn')}
+          />
+          <Input
+            label={t('templateContentUk')}
+            value={addFormData.content_uk}
+            onChange={(e) => setAddFormData({ ...addFormData, content_uk: e.target.value })}
+            placeholder={t('enterTemplateContentUk')}
+          />
+          <Input
+            label={t('templateContentRu')}
+            value={addFormData.content_ru}
+            onChange={(e) => setAddFormData({ ...addFormData, content_ru: e.target.value })}
+            placeholder={t('enterTemplateContentRu')}
+          />
+          <div className="col-span-2">
+            <select
+              value={addFormData.category_id}
+              onChange={(e) => setAddFormData({ ...addFormData, category_id: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+              required
+            >
+              <option value="">{t('selectCategory')}</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name_pl}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-span-2">
+            <select
+              value={addFormData.priority}
+              onChange={(e) => setAddFormData({ ...addFormData, priority: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="low">{t('low')}</option>
+              <option value="medium">{t('medium')}</option>
+              <option value="high">{t('high')}</option>
+              <option value="critical">{t('critical')}</option>
+            </select>
+          </div>
+        </div>
+      </EditModal>
+
+      <EditModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleEdit}
         title={t('editTemplate')}
         isLoading={isSubmitting}
+        additionalButton={{
+          icon: <FiGlobe className="w-4 h-4" />,
+          onClick: handleEditAutoTranslate,
+          disabled: !editFormData.name_pl || !editFormData.content_pl || isEditTranslating,
+          children: isEditTranslating ? t('translating') : t('translate')
+        }}
       >
-        <div className="space-y-4">
-          <Input
-            label={t('templateNamePl')}
-            value={editFormData.name_pl}
-            onChange={(e) => setEditFormData({ ...editFormData, name_pl: e.target.value })}
-            required
-            placeholder={t('enterTemplateNamePl')}
-            button={{
-              icon: <FiGlobe className="w-4 h-4" />,
-              onClick: handleEditAutoTranslate,
-              disabled: !editFormData.name_pl || !editFormData.content_pl || isEditTranslating,
-              children: isEditTranslating ? t('translating') : t('translate')
-            }}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <Input
+              label={t('templateNamePl')}
+              value={editFormData.name_pl}
+              onChange={(e) => setEditFormData({ ...editFormData, name_pl: e.target.value })}
+              required
+              placeholder={t('enterTemplateNamePl')}
+            />
+          </div>
           <Input
             label={t('templateNameEn')}
             value={editFormData.name_en}
@@ -506,13 +532,15 @@ const TemplatesPanel: React.FC = () => {
             onChange={(e) => setEditFormData({ ...editFormData, name_ru: e.target.value })}
             placeholder={t('enterTemplateNameRu')}
           />
-          <Input
-            label={t('templateContentPl')}
-            value={editFormData.content_pl}
-            onChange={(e) => setEditFormData({ ...editFormData, content_pl: e.target.value })}
-            required
-            placeholder={t('enterTemplateContentPl')}
-          />
+          <div className="col-span-2">
+            <Input
+              label={t('templateContentPl')}
+              value={editFormData.content_pl}
+              onChange={(e) => setEditFormData({ ...editFormData, content_pl: e.target.value })}
+              required
+              placeholder={t('enterTemplateContentPl')}
+            />
+          </div>
           <Input
             label={t('templateContentEn')}
             value={editFormData.content_en}
@@ -531,29 +559,33 @@ const TemplatesPanel: React.FC = () => {
             onChange={(e) => setEditFormData({ ...editFormData, content_ru: e.target.value })}
             placeholder={t('enterTemplateContentRu')}
           />
-          <select
-            value={editFormData.category_id}
-            onChange={(e) => setEditFormData({ ...editFormData, category_id: e.target.value })}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-            required
-          >
-            <option value="">{t('selectCategory')}</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name_pl}
-              </option>
-            ))}
-          </select>
-          <select
-            value={editFormData.priority}
-            onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value })}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-          >
-            <option value="low">{t('priorityLow')}</option>
-            <option value="medium">{t('priorityMedium')}</option>
-            <option value="high">{t('priorityHigh')}</option>
-            <option value="critical">{t('priorityCritical')}</option>
-          </select>
+          <div className="col-span-2">
+            <select
+              value={editFormData.category_id}
+              onChange={(e) => setEditFormData({ ...editFormData, category_id: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+              required
+            >
+              <option value="">{t('selectCategory')}</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name_pl}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-span-2">
+            <select
+              value={editFormData.priority}
+              onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="low">{t('low')}</option>
+              <option value="medium">{t('medium')}</option>
+              <option value="high">{t('high')}</option>
+              <option value="critical">{t('critical')}</option>
+            </select>
+          </div>
         </div>
       </EditModal>
 
@@ -562,7 +594,7 @@ const TemplatesPanel: React.FC = () => {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
         title={t('confirmDelete')}
-        message={t('confirmDeleteTemplate', { name: selectedTemplate?.name_pl })}
+        message={`${t('confirmDeleteTemplate')} ${selectedTemplate?.name_pl}`}
         isLoading={isSubmitting}
       />
     </div>
