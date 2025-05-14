@@ -1,7 +1,7 @@
 export interface Category {
   id: string;
-  name_en: string;
   name_pl: string;
+  name_en: string;
   name_uk: string;
   name_ru: string;
   created_at?: string;
@@ -9,8 +9,8 @@ export interface Category {
 }
 
 export interface CategoryFormData {
-  name_en: string;
   name_pl: string;
+  name_en: string;
   name_uk: string;
   name_ru: string;
 } 
