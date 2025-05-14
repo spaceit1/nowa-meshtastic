@@ -33,8 +33,6 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
 }) => {
     const { t } = useLanguage();
 
-    console.log(categories);
-
     return (
         <div className="flex flex-col space-y-6">
             <h2 className="text-lg font-medium mb-2">{t("broadcastMessage")}</h2>
