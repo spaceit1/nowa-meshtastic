@@ -1,6 +1,8 @@
-export const categories = [
-   { id: "evacuation", name: "Evacuation" },
-   { id: "emergency", name: "Emergency" },
-   { id: "maintenance", name: "Maintenance" },
-   { id: "other", name: "Other" },
+import type { Category } from '../types/template';
+
+export const categories: Category[] = [
+   { id: "evacuation", name: "Ewakuacja" },
+   { id: "emergency", name: "Ekstremalna sytuacja" },
+   { id: "maintenance", name: "Serwis" },
+   { id: "other", name: "Inne" },
 ];

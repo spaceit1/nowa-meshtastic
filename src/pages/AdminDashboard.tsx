@@ -20,6 +20,7 @@ import UserMessagesPanel from "../components/panels/UserMessagesPanel";
 import NodesPanel from "../components/panels/NodesPanel";
 import TemplatesPanel from "../components/panels/TemplatesPanel";
 import LogsPanel from "../components/panels/LogsPanel";
+import CategoryPanel from "../components/panels/CategoryPanel";
 import EditTemplateModal from "../components/modals/EditTemplateModal";
 import DeleteTemplateModal from "../components/modals/DeleteTemplateModal";
 import ViewTemplateModal from "../components/modals/ViewTemplateModal";
@@ -262,6 +263,7 @@ const AdminDashboard: React.FC = () => {
         { icon: FiRadio, label: t("nodes") },
         { icon: FiList, label: t("templates") },
         { icon: FiDatabase, label: t("logs") },
+        { icon: FiList, label: t("categories") },
     ];
 
     return (
@@ -372,6 +374,10 @@ const AdminDashboard: React.FC = () => {
 
                         {currentTab === 4 && (
                             <LogsPanel />
+                        )}
+
+                        {currentTab === 5 && (
+                            <CategoryPanel />
                         )}
                     </div>
                 </div>

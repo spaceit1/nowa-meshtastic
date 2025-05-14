@@ -105,4 +105,5 @@ export const ru = {
     itemsSelected: "элементы выбраны",
     processSelected: "Обработать выбранные",
     resolveSelected: "Решить выбранные",
+    categories: "Категории",
 } as const; 

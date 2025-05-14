@@ -104,4 +104,5 @@ export const uk = {
     itemsSelected: "вибрано",
     processSelected: "Обробити",
     resolveSelected: "Вирішити",
+    categories: "Категорії",
 } as const; 

@@ -105,4 +105,5 @@ export const pl = {
     itemsSelected: "elementy wybrane",
     processSelected: "Przetwarzanie wybranych",
     resolveSelected: "Rozwiązywanie wybranych",
+    categories: "Kategorie",
 } as const; 

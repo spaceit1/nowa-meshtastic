@@ -104,4 +104,5 @@ export const en = {
     itemsSelected: "items selected",
     processSelected: "Process Selected",
     resolveSelected: "Resolve Selected",
+    categories: "Categories",
 } as const; 
