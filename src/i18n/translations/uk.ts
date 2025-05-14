@@ -33,5 +33,30 @@ export const uk = {
     languageSelector: "Вибір мови",
     contrast: "Контраст",
     decreaseFontSize: "Зменшити розмір шрифту",
-    increaseFontSize: "Збільшити розмір шрифту"
+    increaseFontSize: "Збільшити розмір шрифту",
+
+    activeNodes: "Активні вузли",
+    totalConnectedNodes: "Всього підключених вузлів",
+    onlineUsers: "Онлайн-користувачі",
+    connectedToNetwork: "Підключено до мережі",
+    pendingMessages: "Очікуючі повідомлення",
+    awaitingDelivery: "Очікування доставки",
+    batteryAvg: "Середній заряд батареї",
+    acrossAllNodes: "На всіх вузлах",   
+
+    warningTitleOnAdminDashboard: "Рівень заряду батареї вузла Східного госпіталю критично низький (23%). Будь ласка, замініть або зарядіть.",  
+
+    allMessages: "Всі Повідомлення",
+    allStatuses: "Всі Статуси",
+    filterByCategory: "Фільтрувати за Категорією",
+    filterByStatus: "Фільтрувати за Статусом",
+    startProcessing: "Почати Обробку",
+    markResolved: "Позначити як Вирішене",
+    reply: "Відповісти",
+    noUserMessages: "Немає Повідомлень",
+    noUserMessagesDesc: "Наразі немає повідомлень або запитів на допомогу.",
+    itemSelected: "елемент вибрано",
+    itemsSelected: "елементів вибрано",
+    processSelected: "Обробити Вибрані",
+    resolveSelected: "Вирішити Вибрані",
 } as const; 

@@ -33,5 +33,30 @@ export const pl = {
     languageSelector: "Selektor Języka",
     contrast: "Kontrast",
     decreaseFontSize: "Zmniejsz Rozmiar Czcionki",
-    increaseFontSize: "Zwiększ Rozmiar Czcionki"
+    increaseFontSize: "Zwiększ Rozmiar Czcionki",
+
+    activeNodes: "Aktywne Węzły",
+    totalConnectedNodes: "Łącznie Połączonych Węzłów",
+    onlineUsers: "Użytkownicy Online",
+    connectedToNetwork: "Połączony z siecią",
+    pendingMessages: "Oczekujące wiadomości",
+    awaitingDelivery: "Oczekiwanie na dostarczenie",
+    batteryAvg: "Średnia pojemność baterii",
+    acrossAllNodes: "Na wszystkich węzłach",
+
+    warningTitleOnAdminDashboard: "Poziom ładowania baterii węzła szpitala wschodniego jest krytycznie niski (23%). Proszę zastąpić lub naładować.",
+
+    allMessages: "Wszystkie Wiadomości",
+    allStatuses: "Wszystkie Statusy",
+    filterByCategory: "Filtruj według Kategorii",
+    filterByStatus: "Filtruj według Statusu",
+    startProcessing: "Rozpocznij Przetwarzanie",
+    markResolved: "Oznacz jako Rozwiązane",
+    reply: "Odpowiedz",
+    noUserMessages: "Brak Wiadomości",
+    noUserMessagesDesc: "Obecnie nie ma żadnych wiadomości ani próśb o pomoc.",
+    itemSelected: "element wybrany",
+    itemsSelected: "elementów wybranych",
+    processSelected: "Przetwórz Wybrane",
+    resolveSelected: "Rozwiąż Wybrane",
 } as const; 

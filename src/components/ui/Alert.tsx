@@ -4,8 +4,9 @@ import Badge from './Badge';
 
 interface AlertProps {
     variant: 'danger' | 'warning' | 'info' | 'success';
+    size?: 'sm' | 'md' | 'lg';
+    badgeTitle?: string;
     title?: string;
-    description?: string;
     date?: string;
     className?: string;
     children?: React.ReactNode;
@@ -13,12 +14,37 @@ interface AlertProps {
 
 const Alert: React.FC<AlertProps> = ({
     variant,
+    size = 'md',
+    badgeTitle,
     title,
-    description,
     date,
     className = '',
     children
 }) => {
+    const sizeStyles = {
+        sm: {
+            padding: 'p-2 md:p-3',
+            icon: 'w-6 h-6 md:w-8 md:h-8',
+            text: 'text-sm md:text-base',
+            title: 'text-sm md:text-base',
+            children: 'text-xs md:text-sm'
+        },
+        md: {
+            padding: 'p-3 md:p-5',
+            icon: 'w-8 h-8 md:w-10 md:h-10',
+            text: 'text-md md:text-lg',
+            title: 'text-md md:text-lg',
+            children: 'text-xs md:text-sm'
+        },
+        lg: {
+            padding: 'p-4 md:p-6',
+            icon: 'w-10 h-10 md:w-12 md:h-12',
+            text: 'text-lg md:text-xl',
+            title: 'text-lg md:text-xl',
+            children: 'text-sm md:text-base'
+        }
+    };
+
     const variantStyles = {
         danger: {
             container: 'bg-red-700 text-white dark:bg-red-800',
@@ -47,35 +73,36 @@ const Alert: React.FC<AlertProps> = ({
     };
 
     const styles = variantStyles[variant];
+    const sizeStyle = sizeStyles[size];
     const Icon = styles.icon;
 
     return (
-        <div className={`w-full p-3 md:p-5 rounded-lg shadow-lg relative overflow-hidden ${styles.container} ${className}`}>
+        <div className={`w-full ${sizeStyle.padding} rounded-lg shadow-lg relative overflow-hidden ${styles.container} ${className}`}>
             <div className={`absolute top-0 left-0 right-0 h-1 ${styles.lineColor}`}></div>
             <div className="flex flex-col sm:flex-row items-center sm:items-start">
-                <Icon className="w-8 h-8 md:w-10 md:h-10 mr-0 sm:mr-4 mb-2 sm:mb-0" />
-                <div className="text-center sm:text-left">
-                    {(title || date) && (
+                <Icon className={`${sizeStyle.icon} mr-0 sm:mr-4 mb-2 sm:mb-0`} />
+                <div className="text-center sm:text-left  self-center">
+                    {(badgeTitle || date) && (
                         <div className="flex flex-col sm:flex-row mb-1 gap-2 items-center sm:items-start">
-                            {title && (
-                                <Badge variant={styles.badgeVariant} size="md">
-                                    {title}
+                            {badgeTitle && (
+                                <Badge variant={styles.badgeVariant} size={size}>
+                                    {badgeTitle}
                                 </Badge>
                             )}
                             {date && (
-                                <Badge variant={styles.badgeVariant} size="md">
+                                <Badge variant={styles.badgeVariant} size={size}>
                                     {date}
                                 </Badge>
                             )}
                         </div>
                     )}
-                    {description && (
-                        <p className="font-bold text-md md:text-lg mb-1 leading-relaxed">
-                            {description}
+                    {title && (
+                        <p className={`font-bold ${sizeStyle.title} leading-relaxed`}>
+                            {title}
                         </p>
                     )}
                     {children && (
-                        <div className="text-xs md:text-sm leading-relaxed">
+                        <div className={`${sizeStyle.children} leading-relaxed mt-1`}>
                             {children}
                         </div>
                     )}

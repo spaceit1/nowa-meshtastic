@@ -98,9 +98,9 @@ const LandingPage: React.FC = () => {
                 <div className="flex flex-col items-center text-center mb-10 space-y-8">
                     <Alert
                         variant="danger"
-                        title={t("activeEmergencyAlert") || "Active Emergency Alert"}
+                        badgeTitle={t("activeEmergencyAlert") || "Active Emergency Alert"}
                         date={new Date().toLocaleDateString()}
-                        description={t("checkUserAppForDetails") || "Check the user application for latest updates and instructions."}
+                        title={t("checkUserAppForDetails") || "Check the user application for latest updates and instructions."}
                     >
                         {t("emergencyInstructions") || "Follow official instructions and keep your device charged. Emergency services are responding."}
                     </Alert>

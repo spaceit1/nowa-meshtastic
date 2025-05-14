@@ -33,5 +33,30 @@ export const ru = {
     languageSelector: "Выбор языка",
     contrast: "Контраст",
     decreaseFontSize: "Уменьшить размер шрифта",
-    increaseFontSize: "Увеличить размер шрифта"
+    increaseFontSize: "Увеличить размер шрифта",
+
+    activeNodes: "Активные узлы",
+    totalConnectedNodes: "Всего подключенных узлов",
+    onlineUsers: "Онлайн-пользователи",
+    connectedToNetwork: "Подключено к сети",
+    pendingMessages: "Ожидающие сообщения",
+    awaitingDelivery: "Ожидание доставки",
+    batteryAvg: "Средний заряд батареи",
+    acrossAllNodes: "На всех узлах",
+
+    warningTitleOnAdminDashboard: "Уровень заряда батареи узла Восточного госпиталя критически низкий (23%). Пожалуйста, замените или зарядите.",
+
+    allMessages: "Все Сообщения",
+    allStatuses: "Все Статусы",
+    filterByCategory: "Фильтровать по Категории",
+    filterByStatus: "Фильтровать по Статусу",
+    startProcessing: "Начать Обработку",
+    markResolved: "Отметить как Решенное",
+    reply: "Ответить",
+    noUserMessages: "Нет Сообщений",
+    noUserMessagesDesc: "В настоящее время нет сообщений или запросов на помощь.",
+    itemSelected: "элемент выбран",
+    itemsSelected: "элементов выбрано",
+    processSelected: "Обработать Выбранные",
+    resolveSelected: "Решить Выбранные",
 } as const; 
