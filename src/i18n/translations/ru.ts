@@ -134,4 +134,5 @@ export const ru = {
     loading: 'Загрузка...',
     edit: 'Редактировать',
     delete: 'Удалить',
+    translate: 'Перевести',
 } as const; 

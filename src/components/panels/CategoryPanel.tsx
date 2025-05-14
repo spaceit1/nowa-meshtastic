@@ -15,7 +15,13 @@ const CategoryPanel: React.FC = () => {
     const { t } = useLanguage();
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState<CategoryFormData>({
+    const [addFormData, setAddFormData] = useState<CategoryFormData>({
+        name_pl: '',
+        name_en: '',
+        name_uk: '',
+        name_ru: '',
+    });
+    const [editFormData, setEditFormData] = useState<CategoryFormData>({
         name_pl: '',
         name_en: '',
         name_uk: '',
@@ -26,6 +32,7 @@ const CategoryPanel: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
+    const [isEditTranslating, setIsEditTranslating] = useState(false);
 
     useEffect(() => {
         fetchCategories();
@@ -51,7 +58,7 @@ const CategoryPanel: React.FC = () => {
     const translateText = async (text: string, targetLang: string) => {
         try {
             console.log('Wysyłanie żądania tłumaczenia:', { text, targetLang });
-            
+
             const apiPort = import.meta.env.VITE_API_PORT || '3000';
             const response = await fetch(`http://localhost:${apiPort}/api/translate`, {
                 method: 'POST',
@@ -80,17 +87,17 @@ const CategoryPanel: React.FC = () => {
     };
 
     const handleAutoTranslate = async () => {
-        if (!formData.name_pl) return;
-        
+        if (!addFormData.name_pl) return;
+
         setIsTranslating(true);
         try {
             const [en, uk, ru] = await Promise.all([
-                translateText(formData.name_pl, 'EN'),
-                translateText(formData.name_pl, 'UK'),
-                translateText(formData.name_pl, 'RU'),
+                translateText(addFormData.name_pl, 'EN'),
+                translateText(addFormData.name_pl, 'UK'),
+                translateText(addFormData.name_pl, 'RU'),
             ]);
 
-            setFormData(prev => ({
+            setAddFormData(prev => ({
                 ...prev,
                 name_en: en,
                 name_uk: uk,
@@ -106,18 +113,45 @@ const CategoryPanel: React.FC = () => {
         }
     };
 
+    const handleEditAutoTranslate = async () => {
+        if (!editFormData.name_pl) return;
+
+        setIsEditTranslating(true);
+        try {
+            const [en, uk, ru] = await Promise.all([
+                translateText(editFormData.name_pl, 'EN'),
+                translateText(editFormData.name_pl, 'UK'),
+                translateText(editFormData.name_pl, 'RU'),
+            ]);
+
+            setEditFormData(prev => ({
+                ...prev,
+                name_en: en,
+                name_uk: uk,
+                name_ru: ru,
+            }));
+
+            toast.success(t('translationSuccess'));
+        } catch (error) {
+            toast.error(t('translationError'));
+            console.error('Translation error:', error);
+        } finally {
+            setIsEditTranslating(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
             const { error } = await supabase
                 .from('categories')
-                .insert([formData]);
+                .insert([addFormData]);
 
             if (error) throw error;
 
             toast.success(t('categoryAdded'));
-            setFormData({
+            setAddFormData({
                 name_pl: '',
                 name_en: '',
                 name_uk: '',
@@ -138,7 +172,7 @@ const CategoryPanel: React.FC = () => {
         try {
             const { error } = await supabase
                 .from('categories')
-                .update(formData)
+                .update(editFormData)
                 .eq('id', selectedCategory.id);
 
             if (error) throw error;
@@ -178,7 +212,7 @@ const CategoryPanel: React.FC = () => {
 
     const openEditModal = (category: Category) => {
         setSelectedCategory(category);
-        setFormData({
+        setEditFormData({
             name_pl: category.name_pl,
             name_en: category.name_en,
             name_uk: category.name_uk,
@@ -197,60 +231,49 @@ const CategoryPanel: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6 max-w-4xl mx-auto">
-            <Card
-                title={t('addNewCategory')}
-                variant="default"
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700"
-            >
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <Input
-                        label={t('categoryNamePl')}
-                        value={formData.name_pl}
-                        onChange={(e) => setFormData({ ...formData, name_pl: e.target.value })}
-                        required
-                        placeholder={t('enterCategoryNamePl')}
-                        icon={<FiTag />}
-                    />
-                    <div className="flex justify-end">
-                        <Button
-                            type="button"
-                            onClick={handleAutoTranslate}
-                            disabled={!formData.name_pl || isTranslating}
-                            className="flex items-center gap-2 text-sm"
-                        >
-                            <FiGlobe className="w-4 h-4" />
-                            {isTranslating ? t('translating') : t('autoTranslate')}
-                        </Button>
-                    </div>
-                    <Input
-                        label={t('categoryNameEn')}
-                        value={formData.name_en}
-                        onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
-                        placeholder={t('enterCategoryNameEn')}
-                    />
-                    <Input
-                        label={t('categoryNameUk')}
-                        value={formData.name_uk}
-                        onChange={(e) => setFormData({ ...formData, name_uk: e.target.value })}
-                        placeholder={t('enterCategoryNameUk')}
-                    />
-                    <Input
-                        label={t('categoryNameRu')}
-                        value={formData.name_ru}
-                        onChange={(e) => setFormData({ ...formData, name_ru: e.target.value })}
-                        placeholder={t('enterCategoryNameRu')}
-                    />
-                    <Button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
-                    >
-                        <FiPlus className="w-5 h-5" />
-                        {isSubmitting ? t('adding') : t('addCategory')}
-                    </Button>
-                </form>
-            </Card>
+        <div className="space-y-6 mx-auto">
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <Input
+                    label={t('categoryNamePl')}
+                    value={addFormData.name_pl}
+                    onChange={(e) => setAddFormData({ ...addFormData, name_pl: e.target.value })}
+                    required
+                    placeholder={t('enterCategoryNamePl')}
+                    icon={<FiTag />}
+                    button={{
+                        icon: <FiGlobe className="w-4 h-4" />,
+                        onClick: handleAutoTranslate,
+                        disabled: !addFormData.name_pl || isTranslating,
+                        children: isTranslating ? t('translating') : t('translate')
+                    }}
+                />
+                <Input
+                    label={t('categoryNameEn')}
+                    value={addFormData.name_en}
+                    onChange={(e) => setAddFormData({ ...addFormData, name_en: e.target.value })}
+                    placeholder={t('enterCategoryNameEn')}
+                />
+                <Input
+                    label={t('categoryNameUk')}
+                    value={addFormData.name_uk}
+                    onChange={(e) => setAddFormData({ ...addFormData, name_uk: e.target.value })}
+                    placeholder={t('enterCategoryNameUk')}
+                />
+                <Input
+                    label={t('categoryNameRu')}
+                    value={addFormData.name_ru}
+                    onChange={(e) => setAddFormData({ ...addFormData, name_ru: e.target.value })}
+                    placeholder={t('enterCategoryNameRu')}
+                />
+                <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                >
+                    <FiPlus className="w-5 h-5" />
+                    {isSubmitting ? t('adding') : t('addCategory')}
+                </Button>
+            </form>
 
             <Card
                 variant="default"
@@ -258,8 +281,8 @@ const CategoryPanel: React.FC = () => {
             >
                 <div className="space-y-4">
                     {categories.map((category) => (
-                        <div 
-                            key={category.id} 
+                        <div
+                            key={category.id}
                             className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-all duration-200"
                         >
                             <div className="space-y-1">
@@ -298,36 +321,32 @@ const CategoryPanel: React.FC = () => {
                 <div className="space-y-4">
                     <Input
                         label={t('categoryNamePl')}
-                        value={formData.name_pl}
-                        onChange={(e) => setFormData({ ...formData, name_pl: e.target.value })}
+                        value={editFormData.name_pl}
+                        onChange={(e) => setEditFormData({ ...editFormData, name_pl: e.target.value })}
                         required
+                        placeholder={t('enterCategoryNamePl')}
                         icon={<FiTag />}
+                        button={{
+                            icon: <FiGlobe className="w-4 h-4" />,
+                            onClick: handleEditAutoTranslate,
+                            disabled: !editFormData.name_pl || isEditTranslating,
+                            children: isEditTranslating ? t('translating') : t('translate')
+                        }}
                     />
-                    <div className="flex justify-end">
-                        <Button
-                            type="button"
-                            onClick={handleAutoTranslate}
-                            disabled={!formData.name_pl || isTranslating}
-                            className="flex items-center gap-2 text-sm"
-                        >
-                            <FiGlobe className="w-4 h-4" />
-                            {isTranslating ? t('translating') : t('autoTranslate')}
-                        </Button>
-                    </div>
                     <Input
                         label={t('categoryNameEn')}
-                        value={formData.name_en}
-                        onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
+                        value={editFormData.name_en}
+                        onChange={(e) => setEditFormData({ ...editFormData, name_en: e.target.value })}
                     />
                     <Input
                         label={t('categoryNameUk')}
-                        value={formData.name_uk}
-                        onChange={(e) => setFormData({ ...formData, name_uk: e.target.value })}
+                        value={editFormData.name_uk}
+                        onChange={(e) => setEditFormData({ ...editFormData, name_uk: e.target.value })}
                     />
                     <Input
                         label={t('categoryNameRu')}
-                        value={formData.name_ru}
-                        onChange={(e) => setFormData({ ...formData, name_ru: e.target.value })}
+                        value={editFormData.name_ru}
+                        onChange={(e) => setEditFormData({ ...editFormData, name_ru: e.target.value })}
                     />
                 </div>
             </EditModal>

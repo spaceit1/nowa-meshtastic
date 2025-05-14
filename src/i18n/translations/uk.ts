@@ -133,4 +133,5 @@ export const uk = {
     loading: 'Завантаження...',
     edit: 'Редагувати',
     delete: 'Видалити',
+    translate: 'Перекласти',
 } as const; 

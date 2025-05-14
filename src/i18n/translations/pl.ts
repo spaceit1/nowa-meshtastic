@@ -134,4 +134,5 @@ export const pl = {
     loading: 'Ładowanie...',
     edit: 'Edytuj',
     delete: 'Usuń',
+    translate: 'Tłumacz',
 } as const; 
