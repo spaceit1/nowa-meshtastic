@@ -166,4 +166,12 @@ export const ru = {
     noResults: 'Нет результатов',
     category: 'Категория',
     priority: 'Приоритет',
+    loadTemplate: 'Загрузить шаблон',
+    selectTemplate: 'Выбрать шаблон',
+    searchTemplates: 'Поиск шаблонов',
+    templateLoaded: 'Шаблон загружен успешно',
+    noTemplatesFound: 'Шаблоны не найдены',
+    noTemplatesFoundDescription: 'Шаблоны не найдены в базе данных. Пожалуйста, добавьте несколько шаблонов в базу данных.',
+    allCategories: 'Все категории',
+    allPriorities: 'Все приоритеты',
 } as const; 

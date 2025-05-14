@@ -165,4 +165,12 @@ export const en = {
     noResults: 'No results found',
     category: 'Category',
     priority: 'Priority',
+    loadTemplate: 'Load Template',
+    selectTemplate: 'Select Template',
+    searchTemplates: 'Search Templates',
+    templateLoaded: 'Template loaded successfully',
+    noTemplatesFound: 'No templates found',
+    noTemplatesFoundDescription: 'No templates found in the database. Please add some templates to the database.',
+    allCategories: 'All Categories',
+    allPriorities: 'All Priorities',
 } as const; 

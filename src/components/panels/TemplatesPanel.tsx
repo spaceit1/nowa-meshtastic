@@ -242,6 +242,7 @@ const TemplatesPanel: React.FC = () => {
         category_id: '',
         priority: 'medium'
       });
+      setIsAddModalOpen(false);
       fetchTemplates();
     } catch (error) {
       toast.error(t('errorAddingTemplate'));

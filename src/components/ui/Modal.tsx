@@ -68,10 +68,10 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div
         ref={modalRef}
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full ${sizeClasses[size]} overflow-hidden`}
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full min-h-[400px] ${sizeClasses[size]} overflow-hidden`}
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-medium">{title}</h3>

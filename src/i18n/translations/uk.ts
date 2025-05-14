@@ -165,4 +165,12 @@ export const uk = {
     noResults: 'Немає результатів',
     category: 'Категорія',
     priority: 'Пріоритет',
+    loadTemplate: 'Завантажити шаблон',
+    selectTemplate: 'Вибрати шаблон',
+    searchTemplates: 'Пошук шаблонів',
+    templateLoaded: 'Шаблон завантажено успішно',
+    noTemplatesFound: 'Шаблоны не найдены',
+    noTemplatesFoundDescription: 'Шаблоны не найдены в базе данных. Пожалуйста, добавьте несколько шаблонов в базу данных.',
+    allCategories: 'Все категории',
+    allPriorities: 'Все приоритеты',
 } as const; 

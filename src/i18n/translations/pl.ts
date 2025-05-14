@@ -166,4 +166,12 @@ export const pl = {
     confirmDeleteTemplate: 'Czy na pewno chcesz usunąć szablon:',
     category: 'Kategoria',
     priority: 'Priorytet',
+    loadTemplate: 'Wczytaj szablon',
+    selectTemplate: 'Wybierz szablon',
+    searchTemplates: 'Szukaj szablonów',
+    templateLoaded: 'Szablon wczytany pomyślnie',
+    noTemplatesFound: 'Brak szablonów',
+    noTemplatesFoundDescription: 'Brak szablonów w bazie danych. Proszę dodać kilka szablonów do bazy danych.',
+    allCategories: 'Wszystkie kategorie',
+    allPriorities: 'Wszystkie priorytety',
 } as const; 
