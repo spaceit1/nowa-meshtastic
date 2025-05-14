@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { MdContrast, MdFormatSize } from "react-icons/md";
-
+import { useLanguage } from "../../i18n/LanguageContext";
 type ContrastMode = 'normal' | 'high-contrast' | 'yellow-black';
 
 const AccessibilityControls: React.FC = () => {
+    const { t } = useLanguage();
     const [contrastMode, setContrastMode] = useState<ContrastMode>('normal');
     const [fontSize, setFontSize] = useState(16);
     const [isMac, setIsMac] = useState(false);
@@ -79,9 +80,9 @@ const AccessibilityControls: React.FC = () => {
             <button
                 onClick={handleContrastChange}
                 className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                aria-label="Zmień kontrast"
+                aria-label={t("contrast")}
                 aria-pressed={contrastMode !== 'normal'}
-                title={`Zmień kontrast (${getShortcutText('C')})`}
+                title={`${t("contrast")} (${getShortcutText('C')})`}
             >
                 <MdContrast className="w-5 h-5 text-blue-700 dark:text-blue-400" />
             </button>
@@ -89,8 +90,8 @@ const AccessibilityControls: React.FC = () => {
                 <button
                     onClick={() => handleFontSizeChange(false)}
                     className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    aria-label="Zmniejsz rozmiar czcionki"
-                    title={`Zmniejsz rozmiar czcionki (${getShortcutText('-')})`}
+                    aria-label={t("decreaseFontSize")}
+                    title={`${t("decreaseFontSize")} (${getShortcutText('-')})`}
                 >
                     <MdFormatSize className="size-4 text-blue-700 dark:text-blue-400" />
                     <FiArrowDown className="size-4 text-blue-700 dark:text-blue-400" />
@@ -98,8 +99,8 @@ const AccessibilityControls: React.FC = () => {
                 <button
                     onClick={() => handleFontSizeChange(true)}
                     className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    aria-label="Zwiększ rozmiar czcionki"
-                    title={`Zwiększ rozmiar czcionki (${getShortcutText('+')})`}
+                    aria-label={t("increaseFontSize")}
+                    title={`${t("increaseFontSize")} (${getShortcutText('+')})`}
                 >
                     <MdFormatSize className="size-5 text-blue-700 dark:text-blue-400" />
                     <FiArrowUp className="size-5 text-blue-700 dark:text-blue-400" />

@@ -8,12 +8,12 @@ import {
     FiArrowRight,
     FiWifiOff
 } from "react-icons/fi";
-import { useLanguage } from "../../i18n/LanguageContext";
-import Menu from "../../components/ui/Menu";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import Alert from "../../components/ui/Alert";
-import Footer from "../../components/ui/Footer";
+import { useLanguage } from "../i18n/LanguageContext";
+import Menu from "../components/ui/Menu";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import Alert from "../components/ui/Alert";
+import Footer from "../components/ui/Footer";
 
 interface Feature {
     icon: React.ElementType;

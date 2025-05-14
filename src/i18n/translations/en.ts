@@ -25,5 +25,13 @@ export const en = {
     footerText: "© 2025 Emergency Mesh Communication System",
     footerHackathonInfo: "Project created during <a href='https://civil42.pl/' target='_blank' rel='noopener noreferrer' class='text-blue-600 dark:text-blue-400 hover:underline'>CYVIL42 Hackathon 2025</a>",
     lightMode: "Light Mode",
-    darkMode: "Dark Mode"
+    darkMode: "Dark Mode",
+    languageSelector: "Language Selector",
+    toggleMobileMenu: "Toggle Mobile Menu",
+    closeMobileMenu: "Close Mobile Menu",
+    home: "Home",
+    backToHome: "Back to Home",
+    contrast: "Contrast",
+    decreaseFontSize: "Decrease Font Size",
+    increaseFontSize: "Increase Font Size"
 } as const; 

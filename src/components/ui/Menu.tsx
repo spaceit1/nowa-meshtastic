@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiRadio, FiUsers, FiShield, FiMenu, FiX, FiGlobe, FiSun, FiMoon } from "react-icons/fi";
+import { FiRadio, FiUsers, FiShield, FiMenu, FiX, FiArrowLeft, FiSun, FiMoon } from "react-icons/fi";
 import LanguageSelector from "./LanguageSelector";
 import ThemeToggle from "./ThemeToggle";
 import AccessibilityControls from "./AccessibilityControls";
@@ -33,12 +33,24 @@ const Menu: React.FC<MenuProps> = ({
 
     return (
         <header className="py-4 px-4 bg-blue-100 dark:bg-blue-900 relative">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center max-w-screen-xl mx-auto">
                 {/* Logo and title */}
                 <div className="flex items-center gap-2">
-                    <FiRadio className="w-6 h-6 text-blue-700 dark:text-blue-400" />
+                    {window.location.pathname === "/" ? (
+                        <FiRadio className="w-6 h-6 text-blue-700 dark:text-blue-400" />
+                    ) : (
+                        <Link to="/" className="hover:no-underline"
+                            aria-label={t("backToHome")}
+                            title={t("backToHome")}>
+                            <FiArrowLeft className="w-6 h-6 text-blue-700 dark:text-blue-400" />
+                        </Link>
+                    )}
                     <h1 className="text-md md:text-lg font-bold text-blue-700 dark:text-blue-400">
-                        {appTitle}
+                        <Link to="/" className="hover:no-underline" aria-label={t("home")} title={t("home")}>
+                            {window.location.pathname === "/admin" ? adminDashboardText :
+                                window.location.pathname === "/user" ? userDashboardText :
+                                    appTitle}
+                        </Link>
                     </h1>
                 </div>
 
@@ -50,6 +62,8 @@ const Menu: React.FC<MenuProps> = ({
                     <Link
                         to="/user"
                         className="font-medium text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:no-underline flex items-center transition-colors"
+                        aria-label={t("userDashboard")}
+                        title={t("userDashboard")}
                     >
                         <FiUsers className="w-4 h-4 mr-2" />
                         {userDashboardText}
@@ -58,6 +72,8 @@ const Menu: React.FC<MenuProps> = ({
                     <Link
                         to="/admin"
                         className="font-medium text-purple-700 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:no-underline flex items-center transition-colors"
+                        aria-label={t("adminDashboard")}
+                        title={t("adminDashboard")}
                     >
                         <FiShield className="w-4 h-4 mr-2" />
                         {adminDashboardText}
@@ -74,7 +90,8 @@ const Menu: React.FC<MenuProps> = ({
                 <button
                     onClick={toggleMobileMenu}
                     className="md:hidden p-2 rounded-md text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-                    aria-label="Toggle mobile menu"
+                    aria-label={t("toggleMobileMenu")}
+                    title={t("toggleMobileMenu")}
                 >
                     {isMobileMenuOpen ? (
                         <FiX className="w-6 h-6" />
@@ -104,7 +121,8 @@ const Menu: React.FC<MenuProps> = ({
                         <button
                             onClick={closeMobileMenu}
                             className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                            aria-label="Close mobile menu"
+                            aria-label={t("closeMobileMenu")}
+                            title={t("closeMobileMenu")}
                         >
                             <FiX className="w-6 h-6" />
                         </button>
@@ -115,6 +133,8 @@ const Menu: React.FC<MenuProps> = ({
                             to="/user"
                             onClick={closeMobileMenu}
                             className="flex items-center p-2 rounded-md text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
+                            aria-label={t("userDashboard")}
+                            title={t("userDashboard")}
                         >
                             <FiUsers className="w-5 h-5 mr-3" />
                             {userDashboardText}
@@ -124,6 +144,8 @@ const Menu: React.FC<MenuProps> = ({
                             to="/admin"
                             onClick={closeMobileMenu}
                             className="flex items-center p-2 rounded-md text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900 transition-colors"
+                            aria-label={t("adminDashboard")}
+                            title={t("adminDashboard")}
                         >
                             <FiShield className="w-5 h-5 mr-3" />
                             {adminDashboardText}
@@ -138,6 +160,8 @@ const Menu: React.FC<MenuProps> = ({
                                         value={language}
                                         onChange={(e) => changeLanguage(e.target.value)}
                                         className="flex-1 p-2 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                                        aria-label={t("languageSelector")}
+                                        title={t("languageSelector")}
                                     >
                                         {availableLanguages.map((lang) => (
                                             <option key={lang.code} value={lang.code}>
@@ -152,6 +176,8 @@ const Menu: React.FC<MenuProps> = ({
                                     <button
                                         onClick={toggleTheme}
                                         className="flex-1 p-2 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                        aria-label={isDarkMode ? t("darkMode") : t("lightMode")}
+                                        title={isDarkMode ? t("darkMode") : t("lightMode")}
                                     >
                                         {isDarkMode ? t("darkMode") : t("lightMode")}
                                     </button>

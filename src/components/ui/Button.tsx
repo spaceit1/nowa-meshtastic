@@ -12,6 +12,7 @@ interface ButtonProps {
     onClick?: () => void;
     className?: string;
     children: React.ReactNode;
+    type?: 'button' | 'submit' | 'reset';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -24,6 +25,7 @@ const Button: React.FC<ButtonProps> = ({
     onClick,
     className = '',
     children,
+    type = 'button',
 }) => {
     const baseStyles = 'flex items-center justify-center font-bold rounded-md shadow-md transition-all duration-200';
     
@@ -60,7 +62,7 @@ const Button: React.FC<ButtonProps> = ({
     }
 
     return (
-        <button onClick={onClick} className={buttonStyles}>
+        <button type={type} onClick={onClick} className={buttonStyles}>
             {content}
         </button>
     );

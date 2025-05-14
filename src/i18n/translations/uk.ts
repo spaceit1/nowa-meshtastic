@@ -25,5 +25,13 @@ export const uk = {
     footerText: "© 2025 Система Аварійного Зв'язку Mesh",
     footerHackathonInfo: "Проект створено під час <a href='https://civil42.pl/' target='_blank' rel='noopener noreferrer' class='text-blue-600 dark:text-blue-400 hover:underline'>CYVIL42 Hackathon 2025</a>",
     darkMode: "Темний режим",
-    lightMode: "Світлий режим"
+    lightMode: "Світлий режим",
+    closeMobileMenu: "Закрити меню",
+    toggleMobileMenu: "Переключити меню",
+    home: "Головна",
+    backToHome: "Повернутися на головну сторінку",
+    languageSelector: "Вибір мови",
+    contrast: "Контраст",
+    decreaseFontSize: "Зменшити розмір шрифту",
+    increaseFontSize: "Збільшити розмір шрифту"
 } as const; 
