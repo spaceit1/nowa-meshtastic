@@ -2,7 +2,7 @@ import React from "react";
 
 interface CardProps {
     icon?: React.ElementType;
-    title: string;
+    title?: string;
     description?: string;
     steps?: string[];
     variant?: 'default' | 'feature' | 'instructions';

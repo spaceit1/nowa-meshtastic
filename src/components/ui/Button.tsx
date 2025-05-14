@@ -13,6 +13,7 @@ interface ButtonProps {
     className?: string;
     children: React.ReactNode;
     type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
     className = '',
     children,
     type = 'button',
+    disabled = false,
 }) => {
     const baseStyles = 'flex items-center justify-center font-bold rounded-md shadow-md transition-all duration-200';
     
@@ -42,8 +44,9 @@ const Button: React.FC<ButtonProps> = ({
     };
 
     const widthStyles = fullWidth ? 'w-full' : '';
+    const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed hover:transform-none hover:shadow-none' : '';
     
-    const buttonStyles = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyles} ${className}`;
+    const buttonStyles = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyles} ${disabledStyles} ${className}`;
 
     const content = (
         <>
@@ -62,7 +65,7 @@ const Button: React.FC<ButtonProps> = ({
     }
 
     return (
-        <button type={type} onClick={onClick} className={buttonStyles}>
+        <button type={type} onClick={onClick} className={buttonStyles} disabled={disabled}>
             {content}
         </button>
     );
