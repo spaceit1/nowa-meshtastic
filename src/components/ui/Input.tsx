@@ -4,6 +4,7 @@ import { FiAlertCircle } from 'react-icons/fi';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
+    required?: boolean;
     error?: string;
     icon?: React.ReactNode;
     variant?: 'default' | 'error';
@@ -17,7 +18,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-    ({ label, error, icon, variant = 'default', helperText, button, className = '', ...props }, ref) => {
+    ({ label, error, icon, variant = 'default', helperText, button, required = false, className = '', ...props }, ref) => {
         const baseInputClasses = "w-full px-4 py-2.5 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition-colors duration-200";
         const variantClasses = {
             default: "border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white",
@@ -29,6 +30,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 {label && (
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         {label}
+                        {required && <span className="text-red-500 ml-1">*</span>}
                     </label>
                 )}
                 <div className="relative flex">

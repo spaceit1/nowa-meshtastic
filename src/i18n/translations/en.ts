@@ -56,6 +56,7 @@ export const en = {
     broadcastDescription: "Send a message to all users in the network.",
     broadcastCategory: "Category",
     selectCategory: "Select category",
+    selectPriority: "Select priority",
     broadcastMessage: "Message",
     broadcastSend: "Send",
     broadcastCancel: "Cancel",
@@ -160,4 +161,8 @@ export const en = {
     addTemplate: 'Add Template',
     editTemplate: 'Edit Template',
     confirmDeleteTemplate: 'Are you sure you want to delete template:',
+    searchPlaceholder: 'Search...',
+    noResults: 'No results found',
+    category: 'Category',
+    priority: 'Priority',
 } as const; 

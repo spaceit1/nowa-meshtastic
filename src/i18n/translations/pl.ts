@@ -57,6 +57,9 @@ export const pl = {
     broadcastDescription: "Wyślij wiadomość do wszystkich użytkowników w sieci.",
     broadcastCategory: "Kategoria",
     selectCategory: "Wybierz kategorię",
+    selectPriority: 'Wybierz priorytet',
+    searchPlaceholder: 'Szukaj...',
+    noResults: 'Brak wyników',
     broadcastMessage: "Wiadomość",
     broadcastSend: "Wyślij",
     broadcastCancel: "Anuluj",
@@ -161,4 +164,6 @@ export const pl = {
     addTemplate: 'Dodaj szablon',
     editTemplate: 'Edytuj szablon',
     confirmDeleteTemplate: 'Czy na pewno chcesz usunąć szablon:',
+    category: 'Kategoria',
+    priority: 'Priorytet',
 } as const; 

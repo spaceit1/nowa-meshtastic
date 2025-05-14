@@ -160,4 +160,9 @@ export const uk = {
     addTemplate: 'Додати шаблон',
     editTemplate: 'Редагувати шаблон',
     confirmDeleteTemplate: 'Ви впевнені, що хочете видалити шаблон:',
+    selectPriority: 'Виберіть пріоритет',
+    searchPlaceholder: 'Пошук...',
+    noResults: 'Немає результатів',
+    category: 'Категорія',
+    priority: 'Пріоритет',
 } as const; 

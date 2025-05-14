@@ -12,6 +12,7 @@ import type { Category } from '../../types/category';
 import MoreMenu from '../ui/MoreMenu';
 import Badge from '../ui/Badge';
 import type{ BadgeVariant } from '../ui/Badge';
+import Select from '../ui/Select';
 
 interface Template {
   id: string;
@@ -462,31 +463,32 @@ const TemplatesPanel: React.FC = () => {
             placeholder={t('enterTemplateContentRu')}
           />
           <div className="col-span-2">
-            <select
+            <Select
+              label={t('category')}
+              options={categories.map(category => ({
+                value: category.id,
+                label: category.name_pl
+              }))}
               value={addFormData.category_id}
-              onChange={(e) => setAddFormData({ ...addFormData, category_id: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+              onChange={(value) => setAddFormData({ ...addFormData, category_id: value })}
+              placeholder={t('selectCategory')}
               required
-            >
-              <option value="">{t('selectCategory')}</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name_pl}
-                </option>
-              ))}
-            </select>
+              searchable
+            />
           </div>
           <div className="col-span-2">
-            <select
+            <Select
+              label={t('priority')}
+              options={[
+                { value: 'low', label: t('low') },
+                { value: 'medium', label: t('medium') },
+                { value: 'high', label: t('high') },
+                { value: 'critical', label: t('critical') }
+              ]}
               value={addFormData.priority}
-              onChange={(e) => setAddFormData({ ...addFormData, priority: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-            >
-              <option value="low">{t('low')}</option>
-              <option value="medium">{t('medium')}</option>
-              <option value="high">{t('high')}</option>
-              <option value="critical">{t('critical')}</option>
-            </select>
+              onChange={(value) => setAddFormData({ ...addFormData, priority: value })}
+              placeholder={t('selectPriority')}
+            />
           </div>
         </div>
       </EditModal>
@@ -560,31 +562,32 @@ const TemplatesPanel: React.FC = () => {
             placeholder={t('enterTemplateContentRu')}
           />
           <div className="col-span-2">
-            <select
+            <Select
+              label={t('category')}
+              options={categories.map(category => ({
+                value: category.id,
+                label: category.name_pl
+              }))}
               value={editFormData.category_id}
-              onChange={(e) => setEditFormData({ ...editFormData, category_id: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+              onChange={(value) => setEditFormData({ ...editFormData, category_id: value })}
+              placeholder={t('selectCategory')}
               required
-            >
-              <option value="">{t('selectCategory')}</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name_pl}
-                </option>
-              ))}
-            </select>
+              searchable
+            />
           </div>
           <div className="col-span-2">
-            <select
+            <Select
+              label={t('priority')}
+              options={[
+                { value: 'low', label: t('low') },
+                { value: 'medium', label: t('medium') },
+                { value: 'high', label: t('high') },
+                { value: 'critical', label: t('critical') }
+              ]}
               value={editFormData.priority}
-              onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-            >
-              <option value="low">{t('low')}</option>
-              <option value="medium">{t('medium')}</option>
-              <option value="high">{t('high')}</option>
-              <option value="critical">{t('critical')}</option>
-            </select>
+              onChange={(value) => setEditFormData({ ...editFormData, priority: value })}
+              placeholder={t('selectPriority')}
+            />
           </div>
         </div>
       </EditModal>

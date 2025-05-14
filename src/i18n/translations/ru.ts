@@ -56,7 +56,7 @@ export const ru = {
     broadcastTitle: "Бродкаст сообщение",
     broadcastDescription: "Отправить сообщение всем пользователям в сети.",
     broadcastCategory: "Категория",
-    selectCategory: "Выбрать категорию",
+    selectCategory: "Выберите категорию",
     broadcastMessage: "Сообщение",
     broadcastSend: "Отправить",
     broadcastCancel: "Отменить",
@@ -161,4 +161,9 @@ export const ru = {
     addTemplate: 'Добавить шаблон',
     editTemplate: 'Редактировать шаблон',
     confirmDeleteTemplate: 'Вы уверены, что хотите удалить шаблон:',
+    selectPriority: 'Выберите приоритет',
+    searchPlaceholder: 'Поиск...',
+    noResults: 'Нет результатов',
+    category: 'Категория',
+    priority: 'Приоритет',
 } as const; 
