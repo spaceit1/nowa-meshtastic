@@ -174,4 +174,7 @@ export const pl = {
     noTemplatesFoundDescription: 'Brak szablonów w bazie danych. Proszę dodać kilka szablonów do bazy danych.',
     allCategories: 'Wszystkie kategorie',
     allPriorities: 'Wszystkie priorytety',
+    newConnection: 'Nowe połączenie',
+    connectAtLeastOneDevice: 'Połącz przynajmniej jedno urządzenie, aby rozpocząć',
+    noDevices: 'Brak urządzeń',
 } as const; 

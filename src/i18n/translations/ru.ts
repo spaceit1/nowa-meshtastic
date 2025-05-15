@@ -174,4 +174,7 @@ export const ru = {
     noTemplatesFoundDescription: 'Шаблоны не найдены в базе данных. Пожалуйста, добавьте несколько шаблонов в базу данных.',
     allCategories: 'Все категории',
     allPriorities: 'Все приоритеты',
+    newConnection: 'Новое подключение',
+    connectAtLeastOneDevice: 'Подключите хотя бы одно устройство, чтобы начать',
+    noDevices: 'Нет устройств',
 } as const; 

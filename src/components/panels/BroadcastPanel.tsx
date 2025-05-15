@@ -63,6 +63,7 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [selectedPriority, setSelectedPriority] = useState<string>('');
     const [loading, setLoading] = useState(false);
+    const [categoriesLoading, setCategoriesLoading] = useState(true);
 
     useEffect(() => {
         fetchCategories();
@@ -75,6 +76,7 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
     }, [isTemplatesModalOpen]);
 
     const fetchCategories = async () => {
+        setCategoriesLoading(true);
         try {
             const { data, error } = await supabase
                 .from('categories')
@@ -86,6 +88,8 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
         } catch (error) {
             toast.error(t('errorFetchingCategories'));
             console.error('Error fetching categories:', error);
+        } finally {
+            setCategoriesLoading(false);
         }
     };
 
@@ -147,10 +151,10 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
 
     const audienceOptions = [
         { value: 'all', label: t('allUsers') },
-        { value: 'north', label: t('northDistrict') },
-        { value: 'central', label: t('centralDistrict') },
-        { value: 'east', label: t('eastDistrict') },
-        { value: 'emergency', label: t('emergencyPersonnel') }
+        { value: 'north', label: t('northDistrict' as any) },
+        { value: 'central', label: t('centralDistrict' as any) },
+        { value: 'east', label: t('eastDistrict' as any) },
+        { value: 'emergency', label: t('emergencyPersonnel' as any) }
     ];
 
     const categoryOptions = categories.map(category => ({
@@ -167,6 +171,7 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
                     size="sm"
                     icon={FiFileText}
                     onClick={() => setIsTemplatesModalOpen(true)}
+                    disabled={categoriesLoading}
                 >
                     {t('loadTemplate')}
                 </Button>
@@ -174,7 +179,12 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <div className="mb-4">
+                    <div className="mb-4 relative">
+                        {categoriesLoading && (
+                            <div className="absolute inset-0 bg-gray-50/50 dark:bg-gray-800/50 rounded-lg flex items-center justify-center z-10">
+                                <FiLoader className="w-6 h-6 text-purple-600 dark:text-purple-400 animate-spin" />
+                            </div>
+                        )}
                         <Select
                             options={categoryOptions}
                             value={messageCategory}
@@ -216,10 +226,11 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
                             label={t("messageTitle")}
                             placeholder={t("enterMessageTitle")}
                             required
+                            disabled={categoriesLoading}
                         />
                     </div>
 
-                    <div className="mb-4 h-full">
+                    <div className="mb-4">
                         <Textarea
                             id="broadcast-message"
                             value={broadcastMessage}
@@ -228,6 +239,7 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
                             placeholder={t("enterYourMessage")}
                             required
                             className="min-h-[150px]"
+                            disabled={categoriesLoading}
                         />
                     </div>
                 </div>
@@ -238,7 +250,7 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
                     variant="secondary"
                     icon={FiSend}
                     onClick={handleBroadcast}
-                    disabled={!broadcastMessage.trim() || !messageCategory || !messagePriority}
+                    disabled={!broadcastMessage.trim() || !messageCategory || !messagePriority || categoriesLoading}
                 >
                     {t("broadcast")}
                 </Button>
@@ -284,23 +296,28 @@ const BroadcastPanel: React.FC<BroadcastPanelProps> = ({
                             </div>
                         ) : filteredTemplates.length > 0 ? (
                             filteredTemplates.map((template) => (
-                                <button
+                                <div
                                     key={template.id}
+                                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
                                     onClick={() => handleTemplateSelect(template)}
-                                    className="w-full p-4 text-left bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-all duration-200"
                                 >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="font-medium text-gray-800 dark:text-gray-200">
-                                            {template.name_pl}
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                                                {template.name_pl}
+                                            </h3>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                {template.category_id}
+                                            </p>
                                         </div>
                                         <Badge variant={getPriorityColor(template.priority)}>
-                                            {t(template.priority)}
+                                            {t(template.priority as any)}
                                         </Badge>
                                     </div>
                                     <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                                         {template.content_pl}
                                     </div>
-                                </button>
+                                </div>
                             ))
                         ) : (
                             <EmptyState

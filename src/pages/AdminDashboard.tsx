@@ -6,7 +6,8 @@ import {
     FiActivity,
     FiMessageSquare,
     FiList,
-    FiDatabase
+    FiDatabase,
+    FiPlus
 } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useModal } from "../hooks/useModal";
@@ -24,7 +25,8 @@ import CategoryPanel from "../components/panels/CategoryPanel";
 import EditTemplateModal from "../components/modals/EditTemplateModal";
 import DeleteTemplateModal from "../components/modals/DeleteTemplateModal";
 import ViewTemplateModal from "../components/modals/ViewTemplateModal";
-
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
 import { categories } from "../utils/templateData";
 // Mock data types
 export interface Node {
@@ -276,6 +278,23 @@ const AdminDashboard: React.FC = () => {
 
 
             <div className="container mx-auto py-6 px-4 max-w-7xl space-y-6">
+
+                <Card>
+                    <div className="m-auto flex flex-col gap-3 text-center p-4">
+                        <FiList
+                            size={48}
+                            className="mx-auto text-gray-400 dark:text-gray-500"
+                        />
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t("noDevices")}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("connectAtLeastOneDevice")}</p>
+                        <div className="flex justify-center mt-4">
+                            <Button onClick={() => console.log("Otwórz dialog połączenia")} icon={FiPlus}>
+                                {t("newConnection")}
+                            </Button>
+                        </div>
+                    </div>
+                </Card>
+
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <StatCard
                         icon={FiRadio}

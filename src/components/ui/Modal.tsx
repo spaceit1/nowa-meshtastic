@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
         className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full min-h-[400px] ${sizeClasses[size]} overflow-hidden`}
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-medium">{title}</h3>
+          <h3 className="text-lg text-gray-900 dark:text-gray-100 font-medium ">{title}</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"

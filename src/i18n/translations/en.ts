@@ -173,4 +173,7 @@ export const en = {
     noTemplatesFoundDescription: 'No templates found in the database. Please add some templates to the database.',
     allCategories: 'All Categories',
     allPriorities: 'All Priorities',
+    newConnection: 'New Connection',
+    connectAtLeastOneDevice: 'Connect at least one device to start',
+    noDevices: 'No Devices',
 } as const; 
