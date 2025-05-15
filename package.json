@@ -12,18 +12,29 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@meshtastic/core": "npm:@jsr/meshtastic__core@^2.6.2",
+    "@meshtastic/js": "npm:@jsr/meshtastic__js@^2.6.0-0",
+    "@meshtastic/protobufs": "npm:@jsr/meshtastic__protobufs@^2.6.2",
+    "@meshtastic/transport-deno": "npm:@jsr/meshtastic__transport-deno@^0.1.1",
+    "@meshtastic/transport-http": "npm:@jsr/meshtastic__transport-http@^0.2.1",
+    "@meshtastic/transport-web-bluetooth": "npm:@jsr/meshtastic__transport-web-bluetooth@^0.1.1",
+    "@meshtastic/transport-web-serial": "npm:@jsr/meshtastic__transport-web-serial@^0.2.1",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/vite": "^4.1.6",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "immer": "^10.1.1",
     "node-fetch": "^2.7.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.3",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.0",
     "sonner": "^2.0.3",
-    "tailwindcss": "^4.1.6"
+    "tailwindcss": "^4.1.6",
+    "vite-plugin-pwa": "^1.0.0",
+    "zustand": "^4.5.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

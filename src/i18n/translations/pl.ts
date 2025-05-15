@@ -177,4 +177,13 @@ export const pl = {
     newConnection: 'Nowe połączenie',
     connectAtLeastOneDevice: 'Połącz przynajmniej jedno urządzenie, aby rozpocząć',
     noDevices: 'Brak urządzeń',
+    httpConnection: 'Połączenie HTTP',
+    ipAddress: 'Adres IP',
+    useHttps: 'Użyj HTTPS',
+    connecting: 'Łączenie...',
+    connect: 'Połącz',
+    connectionFailed: 'Połączenie nie powiodło się',
+    connectionFailedDescription: 'Nie udało się połączyć z serwerem. Sprawdź, czy adres jest poprawny i czy serwer jest dostępny.',
+    tlsWarning: 'Uwaga: Połączenie HTTPS nie powiodło się. ',
+    tlsInstructions: ' Upewnij się, że serwer obsługuje HTTPS i ma ważny certyfikat SSL.',
 } as const; 

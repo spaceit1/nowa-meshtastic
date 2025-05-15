@@ -27,7 +27,9 @@ import DeleteTemplateModal from "../components/modals/DeleteTemplateModal";
 import ViewTemplateModal from "../components/modals/ViewTemplateModal";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import Modal from "../components/ui/Modal";
 import { categories } from "../utils/templateData";
+import NewDeviceDialog from '../components/Dialog/NewDeviceDialog';
 // Mock data types
 export interface Node {
     id: string;
@@ -191,6 +193,11 @@ const AdminDashboard: React.FC = () => {
     const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
     const [templates, setTemplates] = useState(mockTemplates);
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+    const [connectDialogOpen, setConnectDialogOpen] = useState(false);
+    const [selectedPort, setSelectedPort] = useState<string>("");
+    const [availablePorts, setAvailablePorts] = useState<string[]>([]);
+    const [isConnecting, setIsConnecting] = useState(false);
+    const [connectedDevices, setConnectedDevices] = useState<any[]>([]);
 
     // Modal hooks
     const editTemplateModal = useModal();
@@ -252,6 +259,44 @@ const AdminDashboard: React.FC = () => {
         console.log("Confirming delete:", templateId);
     };
 
+    const handleConnect = async () => {
+        if (!selectedPort) return;
+        
+        setIsConnecting(true);
+        try {
+            // Tutaj dodamy logikę łączenia z urządzeniem
+            console.log("Łączenie z portem:", selectedPort);
+            // Symulacja połączenia
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            setConnectDialogOpen(false);
+        } catch (error) {
+            console.error("Błąd podczas łączenia:", error);
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+
+    const refreshPorts = async () => {
+        try {
+            // Tutaj dodamy logikę pobierania dostępnych portów
+            // Na razie symulacja
+            setAvailablePorts(["COM1", "COM2", "COM3"]);
+        } catch (error) {
+            console.error("Błąd podczas pobierania portów:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (connectDialogOpen) {
+            refreshPorts();
+        }
+    }, [connectDialogOpen]);
+
+    const handleDeviceConnect = (device: any) => {
+        setConnectedDevices(prev => [...prev, device]);
+        setConnectDialogOpen(false);
+    };
+
     const stats = {
         activeNodes: 12,
         onlineUsers: 56,
@@ -285,15 +330,27 @@ const AdminDashboard: React.FC = () => {
                             size={48}
                             className="mx-auto text-gray-400 dark:text-gray-500"
                         />
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t("noDevices")}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{t("connectAtLeastOneDevice")}</p>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            {connectedDevices.length === 0 ? t('noDevices') : t('connectedDevices')}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {connectedDevices.length === 0 
+                                ? t('connectAtLeastOneDevice')
+                                : t('connectedDevicesCount', { count: connectedDevices.length })}
+                        </p>
                         <div className="flex justify-center mt-4">
-                            <Button onClick={() => console.log("Otwórz dialog połączenia")} icon={FiPlus}>
-                                {t("newConnection")}
+                            <Button onClick={() => setConnectDialogOpen(true)} icon={FiPlus}>
+                                {t('newConnection')}
                             </Button>
                         </div>
                     </div>
                 </Card>
+
+                <NewDeviceDialog
+                    isOpen={connectDialogOpen}
+                    onClose={() => setConnectDialogOpen(false)}
+                    onConnect={handleDeviceConnect}
+                />
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <StatCard
