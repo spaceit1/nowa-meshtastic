@@ -7,7 +7,7 @@ import { FiGlobe } from 'react-icons/fi';
 import { MeshDevice } from "@meshtastic/core";
 import { TransportHTTP } from "@meshtastic/transport-http";
 import { useAppStore } from "@core/stores/appStore.ts";
-import { useDeviceStore } from "@core/stores/deviceStore.ts";
+import { useDevice, useDeviceStore } from "@core/stores/deviceStore.ts";
 import { subscribeAll } from "@core/subscriptions.ts";
 import { randId } from "@core/utils/randId.ts";
 import { useController, useForm } from "react-hook-form";
@@ -24,12 +24,13 @@ interface FormData {
 
 const HTTP = ({ closeDialog }: TabElementProps) => {
     const { t } = useLanguage();
-    const [ip, setIp] = useState('');
+    const [ip, setIp] = useState('meshtastic.local');
     const [tls, setTls] = useState(location.protocol === 'https:');
     const [connectionInProgress, setConnectionInProgress] = useState(false);
     const isURLHTTPS = location.protocol === "https:";
 
     const { addDevice } = useDeviceStore();
+    const { getNode } = useDevice();
     const messageStore = useMessageStore();
     const { setSelectedDevice } = useAppStore();
 
@@ -59,14 +60,23 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
             const transport = await TransportHTTP.create(data.ip, data.tls);
             const device = addDevice(id);
             const connection = new MeshDevice(transport, id);
-            connection.configure();
+
+            // Konfiguracja i inicjalizacja urządzenia
+            await connection.configure();
+
             setSelectedDevice(id);
             device.addConnection(connection);
-            subscribeAll(device, connection, messageStore);
+            await subscribeAll(device, connection, messageStore);
+
+            // Czekamy na załadowanie danych urządzenia
+            const myNode = getNode(device.hardware.myNodeNum);
+            if (!myNode) {
+                throw new Error('Nie udało się załadować danych urządzenia');
+            }
+
             closeDialog();
         } catch (error) {
             console.error("Connection error:", error);
-            // Capture all connection errors regardless of type
             setConnectionError({ host: data.ip, secure: data.tls });
             setConnectionInProgress(false);
         }
@@ -128,18 +138,18 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
                         {t('useHttps')}
                     </label>
                 </div>
-            </form>
 
-            <Button
-                type="submit"
-                disabled={!ip || connectionInProgress}
-                loading={connectionInProgress}
-                variant="primary"
-                size="md"
-                fullWidth
-            >
-                {connectionInProgress ? t('connecting') : t('connect')}
-            </Button>
+                <Button
+                    type="submit"
+                    disabled={!ip || connectionInProgress}
+                    loading={connectionInProgress}
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                >
+                    {connectionInProgress ? t('connecting') : t('connect')}
+                </Button>
+            </form>
         </div>
     );
 };

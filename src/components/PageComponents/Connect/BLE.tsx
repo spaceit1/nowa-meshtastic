@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import Button from '../../ui/Button';
 import { FiRefreshCw } from 'react-icons/fi';
+import { MeshDevice } from "@meshtastic/core";
+import { useAppStore } from "@core/stores/appStore.ts";
+import { useDevice } from "@core/stores/deviceStore.ts";
+import { subscribeAll } from "@core/subscriptions.ts";
+import { randId } from "@core/utils/randId.ts";
+import { useMessageStore } from "@core/stores/messageStore";
 
 interface BLEProps {
     closeDialog: () => void;
@@ -14,6 +20,10 @@ const BLE: React.FC<BLEProps> = ({ closeDialog }) => {
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
+
+    const { addDevice, getNode, hardware } = useDevice();
+    const messageStore = useMessageStore();
+    const { setSelectedDevice: setSelectedDeviceId } = useAppStore();
 
     const scanDevices = async () => {
         if (!navigator.bluetooth) {
@@ -56,6 +66,23 @@ const BLE: React.FC<BLEProps> = ({ closeDialog }) => {
         try {
             const server = await selectedDevice.gatt?.connect();
             if (server) {
+                const id = randId();
+                const device = addDevice(id);
+                const connection = new MeshDevice(server, id);
+                
+                // Konfiguracja i inicjalizacja urządzenia
+                await connection.configure();
+                
+                setSelectedDeviceId(id);
+                device.addConnection(connection);
+                await subscribeAll(device, connection, messageStore);
+                
+                // Czekamy na załadowanie danych urządzenia
+                const myNode = getNode(hardware.myNodeNum);
+                if (!myNode) {
+                    throw new Error('Nie udało się załadować danych urządzenia');
+                }
+                
                 closeDialog();
             }
         } catch (err) {

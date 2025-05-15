@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     FiUsers,
     FiRadio,
@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useModal } from "../hooks/useModal";
+import { useDeviceStore } from "@core/stores/deviceStore";
 
 import Menu from "../components/ui/Menu";
 import Footer from "../components/ui/Footer";
@@ -27,7 +28,6 @@ import DeleteTemplateModal from "../components/modals/DeleteTemplateModal";
 import ViewTemplateModal from "../components/modals/ViewTemplateModal";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
-import Modal from "../components/ui/Modal";
 import { categories } from "../utils/templateData";
 import NewDeviceDialog from '../components/Dialog/NewDeviceDialog';
 // Mock data types
@@ -59,41 +59,6 @@ export interface Template {
     usageCount: number;
     content: string;
 }
-
-const mockNodes: Node[] = [
-    {
-        id: "node-1",
-        name: (t) => t("northDistrict") || "North District Hub",
-        status: "online",
-        users: 24,
-        battery: 86,
-        signal: "good",
-    },
-    {
-        id: "node-2",
-        name: (t) => t("centralDistrict") || "Central Square",
-        status: "online",
-        users: 18,
-        battery: 52,
-        signal: "signalMedium",
-    },
-    {
-        id: "node-3",
-        name: (t) => t("eastDistrict") || "East Hospital",
-        status: "offline",
-        users: 0,
-        battery: 23,
-        signal: "poor",
-    },
-    {
-        id: "node-4",
-        name: (t) => t("schoolZone") || "School Zone",
-        status: "online",
-        users: 12,
-        battery: 78,
-        signal: "good",
-    },
-];
 
 // Mock user help requests
 const mockUserRequests: UserRequest[] = [
@@ -143,45 +108,6 @@ const mockUserRequests: UserRequest[] = [
     },
 ];
 
-const mockTemplates: Template[] = [
-    {
-        id: "tpl-1",
-        name: "evacuationAlert",
-        category: "evacuation",
-        priority: "high",
-        usageCount: 14,
-        content:
-            "PILNE: Wymagana ewakuacja w Twojej okolicy. Udaj się natychmiast do najbliższego schronienia. Zabierz tylko niezbędne rzeczy i postępuj zgodnie z oficjalnymi instrukcjami.",
-    },
-    {
-        id: "tpl-2",
-        name: "medicalAidAvailable",
-        category: "medicalEmergency",
-        priority: "medium",
-        usageCount: 8,
-        content:
-            "Pomoc medyczna jest teraz dostępna w następujących lokalizacjach: Park Centralny (24h), Szpital Wschodni (8-20), oraz jednostki mobilne w dzielnicy północnej.",
-    },
-    {
-        id: "tpl-3",
-        name: "powerOutageUpdate",
-        category: "infrastructure",
-        priority: "low",
-        usageCount: 22,
-        content:
-            "Przerwa w dostawie prądu w sektorach 3, 4 i 7. Przewidywany czas przywrócenia: 18:00. Awaryjne zasilanie dostępne w centrach społecznościowych.",
-    },
-    {
-        id: "tpl-4",
-        name: "foodDistribution",
-        category: "resources",
-        priority: "medium",
-        usageCount: 19,
-        content:
-            "Punkty dystrybucji żywności i wody utworzono w: Główny Plac, Szkoła Centralna i Arena Sportowa. Godziny dystrybucji: 8:00-18:00. Prosimy o zabranie dokumentu tożsamości i pojemników na wodę.",
-    },
-];
-
 const AdminDashboard: React.FC = () => {
     const { t } = useLanguage();
     const [broadcastMessage, setBroadcastMessage] = useState("");
@@ -191,7 +117,6 @@ const AdminDashboard: React.FC = () => {
     const [targetAudience, setTargetAudience] = useState("all");
     const [userRequests, setUserRequests] = useState(mockUserRequests);
     const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
-    const [templates, setTemplates] = useState(mockTemplates);
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
     const [connectDialogOpen, setConnectDialogOpen] = useState(false);
     const [selectedPort, setSelectedPort] = useState<string>("");
@@ -207,6 +132,16 @@ const AdminDashboard: React.FC = () => {
     const [templateContent, setTemplateContent] = useState<Partial<Template>>({});
     const [editingTemplateContent, setEditingTemplateContent] = useState("");
     const [currentTab, setCurrentTab] = useState(0);
+
+    const { getDevices } = useDeviceStore();
+    const devices = useMemo(() => getDevices(), [getDevices]);
+
+    const stats = {
+        activeNodes: devices.reduce((acc, device) => acc + device.getNodesLength(), 0),
+        onlineUsers: devices.reduce((acc, device) => acc + (device.getNodesLength() > 0 ? device.getNodesLength() - 1 : 0), 0),
+        pendingMessages: 8, // TODO: Implement real pending messages count
+        batteryAvg: 64, // TODO: Implement real battery average
+    };
 
     // Load mockMessages on mount
     useEffect(() => {
@@ -261,7 +196,7 @@ const AdminDashboard: React.FC = () => {
 
     const handleConnect = async () => {
         if (!selectedPort) return;
-        
+
         setIsConnecting(true);
         try {
             // Tutaj dodamy logikę łączenia z urządzeniem
@@ -297,13 +232,6 @@ const AdminDashboard: React.FC = () => {
         setConnectDialogOpen(false);
     };
 
-    const stats = {
-        activeNodes: 12,
-        onlineUsers: 56,
-        pendingMessages: 8,
-        batteryAvg: 64,
-    };
-
     const tabs = [
         { icon: FiSend, label: t("broadcast") },
         { icon: FiMessageSquare, label: t("userMessages") },
@@ -321,30 +249,30 @@ const AdminDashboard: React.FC = () => {
                 adminDashboardText={t("adminDashboard")}
             />
 
-
             <div className="container mx-auto py-6 px-4 max-w-7xl space-y-6">
-
-                <Card>
-                    <div className="m-auto flex flex-col gap-3 text-center p-4">
-                        <FiList
-                            size={48}
-                            className="mx-auto text-gray-400 dark:text-gray-500"
-                        />
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            {connectedDevices.length === 0 ? t('noDevices') : t('connectedDevices')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {connectedDevices.length === 0 
-                                ? t('connectAtLeastOneDevice')
-                                : t('connectedDevicesCount', { count: connectedDevices.length })}
-                        </p>
-                        <div className="flex justify-center mt-4">
-                            <Button onClick={() => setConnectDialogOpen(true)} icon={FiPlus}>
-                                {t('newConnection')}
-                            </Button>
-                        </div>
-                    </div>
-                </Card>
+                {devices.length === 0 && (
+                    <>
+                        <Card>
+                            <div className="m-auto flex flex-col gap-3 text-center p-4">
+                                <FiList
+                                    size={48}
+                                    className="mx-auto text-gray-400 dark:text-gray-500"
+                                />
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                    {t('noDevices')}
+                                </h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    {t('connectAtLeastOneDevice')}
+                                </p>
+                                <div className="flex justify-center mt-4">
+                                    <Button onClick={() => setConnectDialogOpen(true)} icon={FiPlus}>
+                                        {t('newConnection')}
+                                    </Button>
+                                </div>
+                            </div>
+                        </Card>
+                    </>
+                )}
 
                 <NewDeviceDialog
                     isOpen={connectDialogOpen}
@@ -352,33 +280,41 @@ const AdminDashboard: React.FC = () => {
                     onConnect={handleDeviceConnect}
                 />
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <StatCard
-                        icon={FiRadio}
-                        label={t("activeNodes")}
-                        value={stats.activeNodes}
-                        helpText={t("totalConnectedNodes")}
-                    />
-                    <StatCard
-                        icon={FiUsers}
-                        label={t("onlineUsers")}
-                        value={stats.onlineUsers}
-                        helpText={t("connectedToNetwork")}
-                    />
-                    <StatCard
-                        icon={FiSend}
-                        label={t("pendingMessages")}
-                        value={stats.pendingMessages}
-                        helpText={t("awaitingDelivery")}
-                    />
-                    <StatCard
-                        icon={FiActivity}
-                        label={t("batteryAvg")}
-                        value={`${stats.batteryAvg}%`}
-                        helpText={t("acrossAllNodes")}
-                    />
+                {devices.length > 0 && (
+                    <>
+                        <div className="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+                            <FiRadio className="w-5 h-5" />
+                            {t('connected')}: {devices[0].getNode(devices[0].hardware.myNodeNum)?.user?.longName ?? "UNK"}
+                        </div>
 
-                </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <StatCard
+                                icon={FiRadio}
+                                label={t("activeNodes")}
+                                value={stats.activeNodes}
+                                helpText={t("totalConnectedNodes")}
+                            />
+                            <StatCard
+                                icon={FiUsers}
+                                label={t("onlineUsers")}
+                                value={stats.onlineUsers}
+                                helpText={t("connectedToNetwork")}
+                            />
+                            <StatCard
+                                icon={FiSend}
+                                label={t("pendingMessages")}
+                                value={stats.pendingMessages}
+                                helpText={t("awaitingDelivery")}
+                            />
+                            <StatCard
+                                icon={FiActivity}
+                                label={t("batteryAvg")}
+                                value={`${stats.batteryAvg}%`}
+                                helpText={t("acrossAllNodes")}
+                            />
+                        </div>
+                    </>
+                )}
 
                 <Alert
                     size="sm"
@@ -435,7 +371,7 @@ const AdminDashboard: React.FC = () => {
                         )}
 
                         {currentTab === 2 && (
-                            <NodesPanel nodes={mockNodes} />
+                            <NodesPanel />
                         )}
 
                         {currentTab === 3 && (

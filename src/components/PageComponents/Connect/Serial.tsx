@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import Button from '../../ui/Button';
 import { FiRefreshCw } from 'react-icons/fi';
+import { MeshDevice } from "@meshtastic/core";
+import { useAppStore } from "@core/stores/appStore.ts";
+import { useDeviceStore } from "@core/stores/deviceStore.ts";
+import { subscribeAll } from "@core/subscriptions.ts";
+import { randId } from "@core/utils/randId.ts";
+import { useMessageStore } from "@core/stores/messageStore";
 
 interface SerialProps {
     closeDialog: () => void;
@@ -13,6 +19,10 @@ const Serial: React.FC<SerialProps> = ({ closeDialog }) => {
     const [selectedPort, setSelectedPort] = useState<SerialPort | null>(null);
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const { addDevice } = useDeviceStore();
+    const messageStore = useMessageStore();
+    const { setSelectedDevice: setSelectedDeviceId } = useAppStore();
 
     const refreshPorts = async () => {
         try {
@@ -36,6 +46,21 @@ const Serial: React.FC<SerialProps> = ({ closeDialog }) => {
 
         try {
             await selectedPort.open({ baudRate: 115200 });
+            
+            const id = randId();
+            const device = addDevice(id);
+            const connection = new MeshDevice(selectedPort, id);
+            
+            // Konfiguracja i inicjalizacja urządzenia
+            await connection.configure();
+            
+            // Czekamy na pełne załadowanie danych
+            await connection.ready;
+            
+            setSelectedDeviceId(id);
+            device.addConnection(connection);
+            await subscribeAll(device, connection, messageStore);
+            
             closeDialog();
         } catch (err) {
             setError(t('errorConnectingToPort'));
