@@ -70,11 +70,11 @@ const NewDeviceDialog: React.FC<NewDeviceDialogProps> = ({
                 </div>
 
                 {connectionType === 'serial' ? (
-                    <Serial onConnect={onConnect} />
+                    <Serial closeDialog={onConnect} />
                 ) : connectionType === 'ble' ? (
-                    <BLE onConnect={onConnect} />
+                    <BLE closeDialog={onConnect} />
                 ) : (
-                    <HTTP onConnect={onConnect} />
+                    <HTTP closeDialog={onClose} />
                 )}
             </div>
         </Modal>
