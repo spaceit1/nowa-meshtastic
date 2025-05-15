@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import Button from '../../ui/Button';
 import Input from '../../ui/Input';
@@ -44,9 +44,7 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
         },
     });
 
-    const {
-        field: { value: tlsValue, onChange: setTLS },
-    } = useController({ name: "tls", control });
+    useController({ name: "tls", control });
 
     const [connectionError, setConnectionError] = useState<
         { host: string; secure: boolean } | null
