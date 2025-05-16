@@ -8,7 +8,6 @@ import {
     FiDatabase
 } from 'react-icons/fi';
 import { useLanguage } from '../../i18n/LanguageContext';
-import type { UserRequest } from '../../pages/AdminDashboard';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
@@ -16,26 +15,39 @@ import type { BadgeVariant } from '../ui/Badge';
 import EmptyState from '../ui/EmptyState';
 import Select from '../ui/Select';
 
+type Priority = 'critical' | 'high' | 'medium' | 'low';
+
+interface UserRequest {
+    id: string;
+    sender: string;
+    userLocation: string;
+    category: string;
+    message: string;
+    timestamp: string;
+    status: string;
+    priority: Priority;
+}
+
 interface UserMessagesPanelProps {
-    userRequests: UserRequest[];
-    selectedRequests: string[];
-    handleRequestSelect: (requestId: string) => void;
-    handleUpdateRequestStatus: (requestId: string, newStatus: string) => void;
-    setSelectedRequests: React.Dispatch<React.SetStateAction<string[]>>;
-    categories: Array<{ id: string; name: string }>;
+    userRequests?: UserRequest[];
+    selectedRequests?: string[];
+    handleRequestSelect?: (requestId: string) => void;
+    handleUpdateRequestStatus?: (requestId: string, newStatus: string) => void;
+    setSelectedRequests?: React.Dispatch<React.SetStateAction<string[]>>;
+    categories?: Array<{ id: string; name: string }>;
 }
 
 const UserMessagesPanel: React.FC<UserMessagesPanelProps> = ({
-    userRequests,
-    selectedRequests,
-    handleRequestSelect,
-    handleUpdateRequestStatus,
-    setSelectedRequests,
-    categories
+    userRequests = [],
+    selectedRequests = [],
+    handleRequestSelect = () => {},
+    handleUpdateRequestStatus = () => {},
+    setSelectedRequests = () => {},
+    categories = []
 }) => {
     const { t } = useLanguage();
 
-    const getPriorityColor = (priority: string): BadgeVariant => {
+    const getPriorityColor = (priority: Priority): BadgeVariant => {
         switch (priority) {
             case "critical":
                 return "red";
@@ -47,6 +59,21 @@ const UserMessagesPanel: React.FC<UserMessagesPanelProps> = ({
                 return "green";
             default:
                 return "gray";
+        }
+    };
+
+    const getPriorityTranslation = (priority: Priority): string => {
+        switch (priority) {
+            case "critical":
+                return t('critical');
+            case "high":
+                return t('high');
+            case "medium":
+                return t('medium');
+            case "low":
+                return t('low');
+            default:
+                return t('low');
         }
     };
 
@@ -148,7 +175,7 @@ const UserMessagesPanel: React.FC<UserMessagesPanelProps> = ({
                                                 onChange={() => handleRequestSelect(request.id)}
                                             />
                                             <Badge variant={getPriorityColor(request.priority)}>
-                                                {t(request.priority as any)}
+                                                {getPriorityTranslation(request.priority)}
                                             </Badge>
                                             <span className="ml-2 font-bold text-gray-900 dark:text-gray-100">
                                                 {request.sender} - {request.userLocation}

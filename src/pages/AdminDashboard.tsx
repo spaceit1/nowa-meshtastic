@@ -32,7 +32,9 @@ import { categories } from "../utils/templateData";
 import NewDeviceDialog from '../components/Dialog/NewDeviceDialog';
 import { Spinner } from "../components/ui/Spinner";
 import UserMessageTemplatesPanel from "../components/panels/UserMessageTemplatesPanel";
-// Mock data types
+
+type Priority = 'critical' | 'high' | 'medium' | 'low';
+
 export interface Node {
     id: string;
     name: (t: (key: string) => string) => string;
@@ -50,7 +52,7 @@ export interface UserRequest {
     message: string;
     timestamp: string;
     status: string;
-    priority: string;
+    priority: Priority;
 }
 
 export interface Template {
