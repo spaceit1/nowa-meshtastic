@@ -43,7 +43,7 @@ const LogsPanel: React.FC = () => {
 
     return (
         <div className="flex flex-col space-y-4">
-            <h2 className="text-lg font-medium mb-2">{t("logs")}</h2>
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t("logs")}</h2>
 
             <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-md font-mono text-sm bg-gray-50 dark:bg-gray-800 overflow-x-auto h-[400px] overflow-y-scroll">
                 {[...logs].reverse().map((log, index) => (

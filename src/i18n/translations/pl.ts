@@ -42,7 +42,10 @@ export const pl = {
     pendingMessages: "Oczekujące wiadomości",
     awaitingDelivery: "Oczekiwanie na dostarczenie",
     batteryAvg: "Średnia pojemność baterii",
+    batteryLvl: "Poziom baterii",
+    batteryLvlHelp: "Poziom naładowania baterii twojego węzła",
     acrossAllNodes: "Na wszystkich węzłach",
+    content: "Treść",
 
     warningTitleOnAdminDashboard: "Poziom ładowania baterii węzła szpitala wschodniego jest krytycznie niski (23%). Proszę zastąpić lub naładować.",
 
@@ -198,4 +201,5 @@ export const pl = {
     encryption: "Szyfrowanie",
     signal: "Sygnał",
     model: "Model",
+    connected: "Połączony",
 } as const; 

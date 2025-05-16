@@ -128,6 +128,7 @@ const AdminDashboard: React.FC = () => {
     const [isConnecting, setIsConnecting] = useState(false);
     const [isLoadingDeviceData, setIsLoadingDeviceData] = useState(false);
     const [connectedDevices, setConnectedDevices] = useState<any[]>([]);
+    const [pendingMessageCount, setPendingMessageCount] = useState(0);
 
     // Modal hooks
     const editTemplateModal = useModal();
@@ -206,11 +207,26 @@ const AdminDashboard: React.FC = () => {
         }
     }, [connectDialogOpen, getDevices]);
 
+    useEffect(() => {
+        if (devices.length === 0) {
+            setPendingMessageCount(0);
+            return;
+        }
+
+        // Calculate pending messages from user requests
+        const pendingRequestCount = userRequests.filter(req =>
+            req.status.toLowerCase().includes('pending')
+        ).length;
+
+        // Set count from pending requests
+        setPendingMessageCount(pendingRequestCount);
+    }, [devices, userRequests]);
+
     const stats = {
         activeNodes: devices.length > 0 ? (devices[0]?.getNodesLength ? devices[0].getNodesLength() : 0) : 0,
         onlineUsers: devices.length > 0 ? ((devices[0]?.getNodesLength ? devices[0].getNodesLength() : 1) - 1) : 0,
-        pendingMessages: 8, // TODO: Implement real pending messages count
-        batteryAvg: myNode?.deviceMetrics?.batteryLevel ?? 0,
+        pendingMessages: pendingMessageCount,
+        batteryLvl: myNode?.deviceMetrics?.batteryLevel ?? 0,
     };
 
     // Load mockMessages on mount
@@ -405,19 +421,19 @@ const AdminDashboard: React.FC = () => {
                             />
                             <StatCard
                                 icon={FiActivity}
-                                label={t("batteryAvg")}
-                                value={`${stats.batteryAvg}%`}
-                                helpText={t("acrossAllNodes")}
+                                label={t("batteryLvl")}
+                                value={`${stats.batteryLvl}%`}
+                                helpText={t("batteryLvlHelp")}
                             />
                         </div>
                     </>
                 )}
 
-                <Alert
+                {/* <Alert
                     size="sm"
                     variant="warning"
                     title={t("warningTitleOnAdminDashboard") || "The battery level of the Eastern Hospital node is critically low (23%). Please replace or recharge."}
-                />
+                /> */}
 
                 {/* Pokaż interfejs zakładek tylko gdy urządzenia są w pełni załadowane */}
                 {devices.length > 0 && !showLoader && (

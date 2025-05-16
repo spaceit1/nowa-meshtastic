@@ -71,7 +71,7 @@ const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div
         ref={modalRef}
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full min-h-[400px] ${sizeClasses[size]} overflow-hidden`}
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full min-h-[400px] max-h-[90vh] ${sizeClasses[size]} overflow-hidden flex flex-col`}
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg text-gray-900 dark:text-gray-100 font-medium ">{title}</h3>
@@ -83,7 +83,7 @@ const Modal: React.FC<ModalProps> = ({
             <FiX className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-4">
+        <div className="p-4 overflow-y-auto">
           {children}
         </div>
       </div>

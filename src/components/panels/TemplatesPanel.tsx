@@ -339,7 +339,9 @@ const TemplatesPanel: React.FC = () => {
 
   return (
     <div className="space-y-6 mx-auto">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t("templates")}</h2>
+
         <Button
           size="sm"
           onClick={() => setIsAddModalOpen(true)}

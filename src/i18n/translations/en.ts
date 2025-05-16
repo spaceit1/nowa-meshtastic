@@ -42,8 +42,10 @@ export const en = {
     pendingMessages: "Pending Messages",
     awaitingDelivery: "Awaiting Delivery",
     batteryAvg: "Battery Average",
+    batteryLvl: "Battery Level",
+    batteryLvlHelp: "Battery level of your node",
     acrossAllNodes: "Across All Nodes",
-
+    content: "Content",
     warningTitleOnAdminDashboard: "The battery level of the Eastern Hospital node is critically low (23%). Please replace or recharge.",
 
     broadcast: "Broadcast",
@@ -188,4 +190,5 @@ export const en = {
     encryption: "Encryption",
     signal: "Signal",
     model: "Model",
+    connected: "Connected",
 } as const; 

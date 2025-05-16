@@ -42,8 +42,11 @@ export const ru = {
     pendingMessages: "Ожидающие сообщения",
     awaitingDelivery: "Ожидание доставки",
     batteryAvg: "Средний заряд батареи",
+    batteryLvl: "Уровень заряда батареи",
+    batteryLvlHelp: "Уровень заряда батареи вашего узла",
     acrossAllNodes: "На всех узлах",
 
+    content: "Содержание",
     warningTitleOnAdminDashboard: "Уровень заряда батареи узла Восточного госпиталя критически низкий (23%). Пожалуйста, замените или зарядите.",
 
 
@@ -177,4 +180,5 @@ export const ru = {
     newConnection: 'Новое подключение',
     connectAtLeastOneDevice: 'Подключите хотя бы одно устройство, чтобы начать',
     noDevices: 'Нет устройств',
+    connected: "Подключено",
 } as const; 

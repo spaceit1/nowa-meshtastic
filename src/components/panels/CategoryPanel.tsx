@@ -232,6 +232,8 @@ const CategoryPanel: React.FC = () => {
 
     return (
         <div className="space-y-6 mx-auto">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t("categories")}</h2>
+
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
                     label={t('categoryNamePl')}

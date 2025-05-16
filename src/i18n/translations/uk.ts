@@ -42,10 +42,11 @@ export const uk = {
     pendingMessages: "Очікуючі повідомлення",
     awaitingDelivery: "Очікування доставки",
     batteryAvg: "Середній заряд батареї",
+    batteryLvl: "Рівень заряду батареї",
     acrossAllNodes: "На всіх вузлах",   
-
+    batteryLvlHelp: "Рівень заряду батареї вашого вузла",
     warningTitleOnAdminDashboard: "Рівень заряду батареї вузла Східного госпіталю критично низький (23%). Будь ласка, замініть або зарядіть.",  
-
+    content: "Зміст",
     broadcast: "Бродкаст",
     userMessages: "Повідомлення користувачів",
     nodes: "Вузли",
@@ -176,4 +177,5 @@ export const uk = {
     newConnection: 'Новое подключение',
     connectAtLeastOneDevice: 'Подключите хотя бы одно устройство, чтобы начать',
     noDevices: 'Нет устройств',
+    connected: "Подключено",
 } as const; 

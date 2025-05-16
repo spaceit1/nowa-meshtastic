@@ -39,7 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({
                         ✕
                     </button>
                 </div>
-                <div className="mb-6">
+                <div className="mb-6 max-h-[500px] overflow-y-auto">
                     {children}
                 </div>
                 <div className="flex justify-end space-x-3">
