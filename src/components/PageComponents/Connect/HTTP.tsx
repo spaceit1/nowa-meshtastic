@@ -87,10 +87,6 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">{t('httpConnection')}</h3>
-            </div>
-
             {connectionError && (
                 <Alert
                     variant="warning"
@@ -120,12 +116,6 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
                     onChange={(e) => setIp(e.target.value)}
                     placeholder="000.000.000.000 / meshtastic.local"
                     icon={<FiGlobe />}
-                    button={{
-                        icon: <FiGlobe />,
-                        onClick: () => { },
-                        disabled: true,
-                        children: tls ? 'https://' : 'http://'
-                    }}
                 />
 
                 <div className="flex items-center gap-2">

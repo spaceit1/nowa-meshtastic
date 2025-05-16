@@ -10,7 +10,10 @@ import {
     FiMessageSquare,
     FiMic,
     FiVolume2,
-    FiSend
+    FiSend,
+    FiFileText,
+    FiChevronDown,
+    FiChevronUp
 } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
 import Menu from "../components/ui/Menu";
@@ -20,6 +23,8 @@ import Alert from "../components/ui/Alert";
 import Footer from "../components/ui/Footer";
 import Badge from "../components/ui/Badge";
 import type { BadgeVariant } from "../components/ui/Badge";
+import { supabase } from "../lib/supabase";
+import { toast } from "sonner";
 
 interface Message {
     id: string;
@@ -29,6 +34,19 @@ interface Message {
     status: 'read' | 'unread';
 }
 
+interface Template {
+    id: string;
+    name_pl: string;
+    content_pl: string;
+    category_id: string;
+    priority: string;
+}
+
+interface Category {
+    id: string;
+    name_pl: string;
+}
+
 const UserDashboard: React.FC = () => {
     const { t } = useLanguage();
     const [messages, setMessages] = useState<Message[]>([]);
@@ -36,6 +54,10 @@ const UserDashboard: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [recognition, setRecognition] = useState<any>(null);
+    const [templates, setTemplates] = useState<Template[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         // Inicjalizacja Web Speech API
@@ -69,7 +91,58 @@ const UserDashboard: React.FC = () => {
                 status: 'unread'
             }
         ]);
+
+        // Pobieranie szablonów i kategorii
+        fetchTemplates();
+        fetchCategories();
     }, []);
+
+    const fetchTemplates = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('user_message_templates')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setTemplates(data || []);
+        } catch (error) {
+            toast.error(t('errorFetchingTemplates'));
+            console.error('Error fetching templates:', error);
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('categories')
+                .select('*')
+                .order('name_pl');
+
+            if (error) throw error;
+            setCategories(data || []);
+        } catch (error) {
+            toast.error(t('errorFetchingCategories'));
+            console.error('Error fetching categories:', error);
+        }
+    };
+
+    const toggleCategory = (categoryId: string) => {
+        setExpandedCategories(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(categoryId)) {
+                newSet.delete(categoryId);
+            } else {
+                newSet.add(categoryId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleTemplateSelect = (template: Template) => {
+        setNewMessage(template.content_pl);
+        toast.success(t('templateLoaded'));
+    };
 
     const startRecording = () => {
         if (recognition) {
@@ -109,6 +182,21 @@ const UserDashboard: React.FC = () => {
         }
     };
 
+    const getPriorityColor = (priority: string): BadgeVariant => {
+        switch (priority) {
+            case "critical":
+                return "red";
+            case "high":
+                return "orange";
+            case "medium":
+                return "blue";
+            case "low":
+                return "green";
+            default:
+                return "gray";
+        }
+    };
+
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900">
             <Menu
@@ -127,7 +215,9 @@ const UserDashboard: React.FC = () => {
                                     {t("messages")}
                                 </h2>
                                 <div className="space-y-4">
-                                    {messages.map((message) => (
+                                    {messages
+                                        .filter(message => message.content.trim() !== '')
+                                        .map((message) => (
                                         <div
                                             key={message.id}
                                             className={`p-4 rounded-lg ${
@@ -175,6 +265,57 @@ const UserDashboard: React.FC = () => {
                                     {t("sendMessage")}
                                 </h3>
                                 <div className="space-y-4">
+                                    <div className="mb-4">
+                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            {t("messageTemplates")}
+                                        </h4>
+                                        <div className="space-y-2">
+                                            {categories
+                                                .filter(category => 
+                                                    templates.some(template => template.category_id === category.id)
+                                                )
+                                                .map((category) => (
+                                                <div key={category.id} className="border rounded-lg overflow-hidden">
+                                                    <button
+                                                        className="w-full p-2 flex items-center justify-between bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                                        onClick={() => toggleCategory(category.id)}
+                                                    >
+                                                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                                                            {category.name_pl}
+                                                        </span>
+                                                        {expandedCategories.has(category.id) ? (
+                                                            <FiChevronUp className="text-gray-500" />
+                                                        ) : (
+                                                            <FiChevronDown className="text-gray-500" />
+                                                        )}
+                                                    </button>
+                                                    {expandedCategories.has(category.id) && (
+                                                        <div className="p-2 space-y-2 bg-white dark:bg-gray-800">
+                                                            {templates
+                                                                .filter(template => template.category_id === category.id)
+                                                                .map(template => (
+                                                                    <button
+                                                                        key={template.id}
+                                                                        className="w-full p-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg flex items-center justify-between"
+                                                                        onClick={() => handleTemplateSelect(template)}
+                                                                    >
+                                                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                                            {template.name_pl}
+                                                                        </span>
+                                                                        <Badge variant={getPriorityColor(template.priority)}>
+                                                                            {template.priority === 'critical' ? t('critical') :
+                                                                             template.priority === 'high' ? t('high') :
+                                                                             template.priority === 'medium' ? t('medium') :
+                                                                             template.priority === 'low' ? t('low') : ''}
+                                                                        </Badge>
+                                                                    </button>
+                                                                ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                     <textarea
                                         className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                         rows={4}

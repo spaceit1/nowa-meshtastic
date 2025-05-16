@@ -1,3 +1,5 @@
+import type { BleConnection } from "@meshtastic/js";
+
 export const pl = {
     appTitle: "System Komunikacji Awaryjnej",
     userDashboard: "Panel Użytkownika",
@@ -54,8 +56,12 @@ export const pl = {
     userMessages: "Wiadomości Użytkowników",
     nodes: "Węzły",
     templates: "Szablony",
-    userMessageTemplates: "Szablony wiadomości użytkowników",
+    userMessagesTemplates: "Szablony wiadomości użytkowników",
     logs: "Logi",
+
+    connectNewDevice: "Połącz nowe urządzenie",
+    serialConnection: "Połączenie serial",
+    bleConnection: "Połączenie Bluetooth",
 
     broadcastTitle: "Wiadomość Broadcast",
     broadcastDescription: "Wyślij wiadomość do wszystkich użytkowników w sieci.",
@@ -203,8 +209,18 @@ export const pl = {
     signal: "Sygnał",
     model: "Model",
     connected: "Połączony",
-    userMessageTemplates: 'Szablony wiadomości użytkowników',
     publicTemplate: 'Szablon publiczny',
     privateTemplate: 'Szablon prywatny',
     makePublic: 'Udostępnij publicznie',
+    messages: "Wiadomości",
+    admin: "Administrator",
+    you: "Ty",
+    speaking: "Mówienie",
+    readAloud: "Czytaj na głos",
+    sendMessage: "Wyślij wiadomość",
+    messageTemplates: "Szablony wiadomości",
+    typeMessage: "Wpisz wiadomość",
+    stopRecording: "Zatrzymaj nagrywanie",
+    startRecording: "Rozpocznij nagrywanie",
+    send: "Wyślij",
 } as const; 

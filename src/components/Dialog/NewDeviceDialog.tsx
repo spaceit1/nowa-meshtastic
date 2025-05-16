@@ -30,7 +30,7 @@ const NewDeviceDialog: React.FC<NewDeviceDialogProps> = ({
             <div className="space-y-6">
                 <div className="grid grid-cols-3 gap-4">
                     <button
-                        className={`p-4 rounded-lg border-2 transition-colors ${connectionType === 'serial'
+                        className={`p-4 rounded-lg text-gray-900 dark:text-gray-100 border-2 transition-colors ${connectionType === 'serial'
                                 ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                 : 'border-gray-200 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-800'
                             }`}
@@ -42,7 +42,7 @@ const NewDeviceDialog: React.FC<NewDeviceDialogProps> = ({
                         </div>
                     </button>
                     <button
-                        className={`p-4 rounded-lg border-2 transition-colors ${connectionType === 'ble'
+                        className={`p-4 rounded-lg text-gray-900 dark:text-gray-100 border-2 transition-colors ${connectionType === 'ble'
                                 ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                 : 'border-gray-200 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-800'
                             }`}
@@ -54,7 +54,7 @@ const NewDeviceDialog: React.FC<NewDeviceDialogProps> = ({
                         </div>
                     </button>
                     <button
-                        className={`p-4 rounded-lg border-2 transition-colors ${connectionType === 'http'
+                        className={`p-4 rounded-lg text-gray-900 dark:text-gray-100 border-2 transition-colors ${connectionType === 'http'
                                 ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                 : 'border-gray-200 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-800'
                             }`}
@@ -62,7 +62,7 @@ const NewDeviceDialog: React.FC<NewDeviceDialogProps> = ({
                     >
                         <div className="flex flex-col items-center gap-2">
                             <FiGlobe className="w-6 h-6" />
-                            <span className="font-medium">{t('httpConnection')}</span>
+                            <span className="text-gray-900 dark:text-gray-100 font-medium">{t('httpConnection')}</span>
                         </div>
                     </button>
                 </div>
