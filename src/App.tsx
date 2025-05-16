@@ -7,11 +7,9 @@ import LandingPage from "./pages/LandingPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import { LoginForm } from "./components/LoginForm";
 import UserDashboard from "./pages/UserDashboard";
-// Importuj DeviceWrapper i potrzebne zależności
-import { DeviceWrapper } from "./DeviceWrapper"; // Dostosuj ścieżkę
-import { useDeviceStore } from "@core/stores/deviceStore"; // Dostosuj ścieżkę
+import { DeviceWrapper } from "./DeviceWrapper";
+import { useDeviceStore } from "@core/stores/deviceStore";
 
-// Komponent chroniący ścieżkę admina
 const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
 
@@ -28,10 +26,9 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
 
 const AppContent: React.FC = () => {
   useDocumentLanguage();
-  // Dodaj hook useDeviceStore, żeby uzyskać device
-  const { getDevice } = useDeviceStore();
-  const selectedDevice = null; // Tutaj możesz ustawić ID wybranego urządzenia, jeśli takie masz
-  const device = selectedDevice ? getDevice(selectedDevice) : undefined;
+  const { getDevices } = useDeviceStore();
+  const devices = getDevices();
+  const device = devices.length > 0 ? devices[0] : undefined;
 
   return (
     <DeviceWrapper device={device}>

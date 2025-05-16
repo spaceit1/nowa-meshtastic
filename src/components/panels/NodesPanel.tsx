@@ -1,14 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useDevice } from '@core/stores/deviceStore';
 import { Protobuf } from '@meshtastic/core';
 import { FiLock, FiUnlock } from 'react-icons/fi';
 
+interface Node {
+    num: number;
+    user?: {
+        longName?: string;
+        hwModel?: number;
+        publicKey?: Uint8Array;
+    };
+    lastHeard: number;
+    hopsAway?: number;
+    viaMqtt?: boolean;
+    snr: number;
+}
+
 const NodesPanel: React.FC = () => {
     const { t } = useLanguage();
     const { getNodes, hasNodeError } = useDevice();
+    const [nodes, setNodes] = useState<Node[]>([]);
 
-    const nodes = getNodes((node) => node.user !== undefined);
+    useEffect(() => {
+        const updateNodes = () => {
+            const filteredNodes = getNodes((node) => node.user !== undefined) as Node[];
+            setNodes(filteredNodes);
+        };
+
+        updateNodes();
+        const interval = setInterval(updateNodes, 1000);
+
+        return () => clearInterval(interval);
+    }, [getNodes]);
 
     const getStatusColor = (lastHeard: number): string => {
         const now = Date.now() / 1000;

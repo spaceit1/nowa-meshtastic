@@ -46,7 +46,7 @@ const LogsPanel: React.FC = () => {
             <h2 className="text-lg font-medium mb-2">{t("logs")}</h2>
 
             <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-md font-mono text-sm bg-gray-50 dark:bg-gray-800 overflow-x-auto h-[400px] overflow-y-scroll">
-                {logs.map((log, index) => (
+                {[...logs].reverse().map((log, index) => (
                     <p key={index} className={getLogColor(log.level)}>
                         [{format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}] {log.level}: {log.message}
                     </p>
