@@ -103,7 +103,7 @@ const mockUserRequests: UserRequest[] = [
         message:
             "Uszkodzony most na ulicy Kwiatowej uniemożliwia ewakuację. Nikt nie może się tędy dostać.",
         timestamp: "2023-06-16T09:00:00Z",
-        status: "pending",
+        status: "pendingsdad",
         priority: "high",
     },
 ];
@@ -136,12 +136,30 @@ const AdminDashboard: React.FC = () => {
     const { getDevices } = useDeviceStore();
     const devices = useMemo(() => getDevices(), [getDevices]);
 
+    // Odświeżanie statystyk po zamknięciu dialogu połączenia
+    const myNode = devices.length > 0
+        ? (devices[0] ? devices[0].getNode(devices[0].hardware?.myNodeNum) : {})
+        : {};
+
+    // Odświeżanie statystyk po zamknięciu dialogu połączenia
+    useEffect(() => {
+        if (!connectDialogOpen) {
+            const updatedDevices = getDevices();
+            setConnectedDevices(updatedDevices);
+            console.log(updatedDevices);
+        }
+    }, [connectDialogOpen, getDevices]);
+
     const stats = {
-        activeNodes: devices.reduce((acc, device) => acc + device.getNodesLength(), 0),
-        onlineUsers: devices.reduce((acc, device) => acc + (device.getNodesLength() > 0 ? device.getNodesLength() - 1 : 0), 0),
+        activeNodes: devices.length > 0 ? (devices[0].getNodesLength ? devices[0].getNodesLength() : 0) : 0,
+        onlineUsers: devices.length > 0 ? ((devices[0].getNodesLength ? devices[0].getNodesLength() : 1) - 1) : 0,
         pendingMessages: 8, // TODO: Implement real pending messages count
-        batteryAvg: 64, // TODO: Implement real battery average
+        batteryAvg: devices.length > 0 ? myNode?.deviceMetrics?.batteryLevel ?? 0 : 0,
     };
+
+    if (devices.length > 0) {
+        console.log(myNode?.user);
+    }
 
     // Load mockMessages on mount
     useEffect(() => {
@@ -192,23 +210,6 @@ const AdminDashboard: React.FC = () => {
 
     const handleConfirmDelete = (templateId: string) => {
         console.log("Confirming delete:", templateId);
-    };
-
-    const handleConnect = async () => {
-        if (!selectedPort) return;
-
-        setIsConnecting(true);
-        try {
-            // Tutaj dodamy logikę łączenia z urządzeniem
-            console.log("Łączenie z portem:", selectedPort);
-            // Symulacja połączenia
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            setConnectDialogOpen(false);
-        } catch (error) {
-            console.error("Błąd podczas łączenia:", error);
-        } finally {
-            setIsConnecting(false);
-        }
     };
 
     const refreshPorts = async () => {
@@ -280,11 +281,19 @@ const AdminDashboard: React.FC = () => {
                     onConnect={handleDeviceConnect}
                 />
 
+
                 {devices.length > 0 && (
                     <>
                         <div className="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100">
                             <FiRadio className="w-5 h-5" />
-                            {t('connected')}: {devices[0].getNode(devices[0].hardware.myNodeNum)?.user?.longName ?? "UNK"}
+                            {devices.map((device) => {
+                                const myNode = device.getNode(device.hardware.myNodeNum);
+                                return (
+                                    <div key={device.id}>
+                                        {t('connected')}: {myNode?.user?.longName ?? "UNK"}
+                                    </div>
+                                )
+                            })}
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

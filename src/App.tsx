@@ -7,6 +7,9 @@ import LandingPage from "./pages/LandingPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import { LoginForm } from "./components/LoginForm";
 import UserDashboard from "./pages/UserDashboard";
+// Importuj DeviceWrapper i potrzebne zależności
+import { DeviceWrapper } from "./DeviceWrapper"; // Dostosuj ścieżkę
+import { useDeviceStore } from "@core/stores/deviceStore"; // Dostosuj ścieżkę
 
 // Komponent chroniący ścieżkę admina
 const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -25,23 +28,29 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
 
 const AppContent: React.FC = () => {
   useDocumentLanguage();
-  
+  // Dodaj hook useDeviceStore, żeby uzyskać device
+  const { getDevice } = useDeviceStore();
+  const selectedDevice = null; // Tutaj możesz ustawić ID wybranego urządzenia, jeśli takie masz
+  const device = selectedDevice ? getDevice(selectedDevice) : undefined;
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/user" element={<UserDashboard />} />
-        <Route 
-          path="/admin" 
-          element={
-            <ProtectedAdminRoute>
-              <AdminDashboard />
-            </ProtectedAdminRoute>
-          } 
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+    <DeviceWrapper device={device}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/user" element={<UserDashboard />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboard />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </DeviceWrapper>
   );
 };
 

@@ -30,7 +30,7 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
     const isURLHTTPS = location.protocol === "https:";
 
     const { addDevice } = useDeviceStore();
-    const { getNode } = useDevice();
+    // const { getNode } = useDevice();
     const messageStore = useMessageStore();
     const { setSelectedDevice } = useAppStore();
 
@@ -60,20 +60,10 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
             const transport = await TransportHTTP.create(data.ip, data.tls);
             const device = addDevice(id);
             const connection = new MeshDevice(transport, id);
-
-            // Konfiguracja i inicjalizacja urządzenia
-            await connection.configure();
-
+            connection.configure();
             setSelectedDevice(id);
             device.addConnection(connection);
-            await subscribeAll(device, connection, messageStore);
-
-            // Czekamy na załadowanie danych urządzenia
-            const myNode = getNode(device.hardware.myNodeNum);
-            if (!myNode) {
-                throw new Error('Nie udało się załadować danych urządzenia');
-            }
-
+            subscribeAll(device, connection, messageStore);
             closeDialog();
         } catch (error) {
             console.error("Connection error:", error);
