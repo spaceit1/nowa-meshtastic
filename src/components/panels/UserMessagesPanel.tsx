@@ -9,6 +9,12 @@ import {
 } from 'react-icons/fi';
 import { useLanguage } from '../../i18n/LanguageContext';
 import type { UserRequest } from '../../pages/AdminDashboard';
+import Card from '../ui/Card';
+import Button from '../ui/Button';
+import Badge from '../ui/Badge';
+import type { BadgeVariant } from '../ui/Badge';
+import EmptyState from '../ui/EmptyState';
+import Select from '../ui/Select';
 
 interface UserMessagesPanelProps {
     userRequests: UserRequest[];
@@ -29,33 +35,33 @@ const UserMessagesPanel: React.FC<UserMessagesPanelProps> = ({
 }) => {
     const { t } = useLanguage();
 
-    const getPriorityColor = (priority: string): string => {
+    const getPriorityColor = (priority: string): BadgeVariant => {
         switch (priority) {
             case "critical":
-                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+                return "red";
             case "high":
-                return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
+                return "orange";
             case "medium":
-                return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+                return "blue";
             case "low":
-                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+                return "green";
             default:
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+                return "gray";
         }
     };
 
-    const getRequestStatusColor = (status: string): string => {
+    const getRequestStatusColor = (status: string): BadgeVariant => {
         switch (status) {
             case "pending":
-                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+                return "yellow";
             case "inProgress":
-                return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+                return "blue";
             case "resolved":
-                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+                return "green";
             case "rejected":
-                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+                return "red";
             default:
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+                return "gray";
         }
     };
 
@@ -92,154 +98,159 @@ const UserMessagesPanel: React.FC<UserMessagesPanelProps> = ({
     };
 
     return (
-        <div className="flex flex-col space-y-4">
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-medium">{t("userMessages")}</h2>
+        <div className="flex flex-col space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t("userMessages")}</h2>
                 <div className="flex space-x-2">
-                    <select
-                        className="p-1.5 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    >
-                        <option value="all">{t("allMessages")}</option>
-                        {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
-                    <select
-                        className="p-1.5 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    >
-                        <option value="all">{t("allStatuses")}</option>
-                        <option value="pending">{t("requestPending")}</option>
-                        <option value="inProgress">{t("requestInProgress")}</option>
-                        <option value="resolved">{t("requestResolved")}</option>
-                    </select>
+                    <Select
+                        options={[
+                            { value: 'all', label: t("allMessages") },
+                            ...categories.map(category => ({
+                                value: category.id,
+                                label: category.name
+                            }))
+                        ]}
+                        value="all"
+                        onChange={() => {}}
+                        placeholder={t("allMessages")}
+                    />
+                    <Select
+                        options={[
+                            { value: 'all', label: t("allStatuses") },
+                            { value: 'pending', label: t("requestPending") },
+                            { value: 'inProgress', label: t("requestInProgress") },
+                            { value: 'resolved', label: t("requestResolved") }
+                        ]}
+                        value="all"
+                        onChange={() => {}}
+                        placeholder={t("allStatuses")}
+                    />
                 </div>
             </div>
 
             {userRequests.length > 0 ? (
-                <div className="flex flex-col space-y-4">
-                    {userRequests.map((request) => {
-                        const CategoryIcon = getCategoryIcon(request.category);
+                <Card variant="default" className="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700">
+                    <div className="space-y-4">
+                        {userRequests.map((request) => {
+                            const CategoryIcon = getCategoryIcon(request.category);
 
-                        return (
-                            <div
-                                key={request.id}
-                                className="border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800"
-                            >
-                                <div className="p-4">
-                                    <div className="flex flex-col md:flex-row md:justify-between">
-                                        <div className="flex-1 mb-4 md:mb-0">
-                                            <div className="flex mb-2 items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    className="mr-3 w-4 h-4"
-                                                    checked={selectedRequests.includes(request.id)}
-                                                    onChange={() => handleRequestSelect(request.id)}
-                                                />
-                                                <span className={`px-2 py-1 text-xs font-medium rounded-full mr-2 ${getPriorityColor(request.priority)}`}>
-                                                    {t(request.priority)}
-                                                </span>
-                                                <span className="font-bold">
-                                                    {request.sender} - {request.userLocation}
-                                                </span>
-                                            </div>
-
-                                            <div className="flex mb-2 items-center">
-                                                <CategoryIcon className={`mr-2 w-4 h-4 text-${getPriorityColor(request.priority).split(' ')[1].replace('text-', '')}`} />
-                                                <span className="font-medium text-gray-600 dark:text-gray-400">
-                                                    {t(request.category)}
-                                                </span>
-                                            </div>
-
-                                            <p className="mb-3">{request.message}</p>
-
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <span>
-                                                    {new Date(request.timestamp).toLocaleString()}
-                                                </span>
-                                                <span className={`ml-3 px-2 py-1 text-xs font-medium rounded-full ${getRequestStatusColor(request.status)}`}>
-                                                    {getRequestStatusLabel(request.status)}
-                                                </span>
-                                            </div>
+                            return (
+                                <div
+                                    key={request.id}
+                                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-all duration-200"
+                                >
+                                    <div className="space-y-1">
+                                        <div className="flex mb-2 items-center">
+                                            <input
+                                                type="checkbox"
+                                                className="mr-3 w-4 h-4"
+                                                checked={selectedRequests.includes(request.id)}
+                                                onChange={() => handleRequestSelect(request.id)}
+                                            />
+                                            <Badge variant={getPriorityColor(request.priority)}>
+                                                {t(request.priority as any)}
+                                            </Badge>
+                                            <span className="ml-2 font-bold text-gray-900 dark:text-gray-100">
+                                                {request.sender} - {request.userLocation}
+                                            </span>
                                         </div>
 
-                                        <div className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2 items-center md:items-end md:ml-4">
-                                            {request.status === "pending" && (
-                                                <>
-                                                    <button
-                                                        className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-                                                        onClick={() => handleUpdateRequestStatus(request.id, "inProgress")}
-                                                    >
-                                                        {t("startProcessing")}
-                                                    </button>
-                                                    <button
-                                                        className="px-3 py-1 text-sm bg-green-500 hover:bg-green-600 text-white rounded-md"
-                                                        onClick={() => handleUpdateRequestStatus(request.id, "resolved")}
-                                                    >
-                                                        {t("markResolved")}
-                                                    </button>
-                                                </>
-                                            )}
+                                        <div className="flex mb-2 items-center">
+                                            <CategoryIcon className="mr-2 w-4 h-4 text-gray-600 dark:text-gray-400" />
+                                            <span className="font-medium text-gray-600 dark:text-gray-400">
+                                                {t(request.category)}
+                                            </span>
+                                        </div>
 
-                                            {request.status === "inProgress" && (
-                                                <button
-                                                    className="px-3 py-1 text-sm bg-green-500 hover:bg-green-600 text-white rounded-md"
+                                        <p className="text-gray-700 dark:text-gray-300">{request.message}</p>
+
+                                        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                            <span>
+                                                {new Date(request.timestamp).toLocaleString()}
+                                            </span>
+                                            <Badge variant={getRequestStatusColor(request.status)} className="ml-3">
+                                                {t(getRequestStatusLabel(request.status) as any)}
+                                            </Badge>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2 items-center md:items-end md:ml-4">
+                                        {request.status === "pending" && (
+                                            <>
+                                                <Button
+                                                    variant="primary"
+                                                    size="sm"
+                                                    onClick={() => handleUpdateRequestStatus(request.id, "inProgress")}
+                                                >
+                                                    {t("startProcessing")}
+                                                </Button>
+                                                <Button
+                                                    variant="primary"
+                                                    size="sm"
                                                     onClick={() => handleUpdateRequestStatus(request.id, "resolved")}
                                                 >
                                                     {t("markResolved")}
-                                                </button>
-                                            )}
+                                                </Button>
+                                            </>
+                                        )}
 
-                                            <button
-                                                className="px-3 py-1 text-sm border border-purple-500 text-purple-500 hover:bg-purple-100 dark:hover:bg-purple-900 rounded-md"
+                                        {request.status === "inProgress" && (
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                onClick={() => handleUpdateRequestStatus(request.id, "resolved")}
                                             >
-                                                {t("reply")}
-                                            </button>
-                                        </div>
+                                                {t("markResolved")}
+                                            </Button>
+                                        )}
+
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                        >
+                                            {t("reply")}
+                                        </Button>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                    </div>
+                </Card>
             ) : (
-                <div className="p-6 text-center border border-gray-200 dark:border-gray-700 rounded-md">
-                    <FiMessageSquare className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                    <h3 className="text-lg font-medium mb-2">
-                        {t("noUserMessages") || "No User Messages"}
-                    </h3>
-                    <p>
-                        {t("noUserMessagesDesc") || "There are no user messages or help requests at this time."}
-                    </p>
-                </div>
+                <EmptyState
+                    title={t("noUserMessages")}
+                    description={t("noUserMessagesDesc")}
+                    icon={<FiMessageSquare className="w-12 h-12 text-gray-400" />}
+                />
             )}
 
             {selectedRequests.length > 0 && (
                 <div className="flex justify-between items-center mt-2">
-                    <p>
+                    <p className="text-gray-700 dark:text-gray-300">
                         {selectedRequests.length}{" "}
                         {selectedRequests.length === 1 ? t("itemSelected") : t("itemsSelected")}
                     </p>
                     <div className="flex space-x-2">
-                        <button
-                            className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+                        <Button
+                            variant="primary"
+                            size="sm"
                             onClick={() => {
                                 selectedRequests.forEach((id) => handleUpdateRequestStatus(id, "inProgress"));
                                 setSelectedRequests([]);
                             }}
                         >
                             {t("processSelected")}
-                        </button>
-                        <button
-                            className="px-3 py-1 text-sm bg-green-500 hover:bg-green-600 text-white rounded-md"
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="sm"
                             onClick={() => {
                                 selectedRequests.forEach((id) => handleUpdateRequestStatus(id, "resolved"));
                                 setSelectedRequests([]);
                             }}
                         >
                             {t("resolveSelected")}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
