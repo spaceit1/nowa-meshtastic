@@ -12,8 +12,7 @@ import {
     FiVolume2,
     FiSend,
     FiActivity,
-    FiPlus,
-    FiList
+    FiPlus
 } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useDeviceStore } from "@core/stores/deviceStore";
@@ -27,7 +26,8 @@ import type { BadgeVariant } from "../components/ui/Badge";
 import StatCard from "../components/ui/StatCard";
 import { Spinner } from "../components/ui/Spinner";
 import NewDeviceDialog from '../components/Dialog/NewDeviceDialog';
-import UserTemplatesPanel from '../components/panels/UserTemplatesPanel';
+import UserMessagesPanel from "../components/panels/UserMessagesPanel";
+import UserMessageTemplatesPanel from "../components/panels/UserMessageTemplatesPanel";
 
 interface Message {
     id: string;
@@ -48,7 +48,6 @@ const UserDashboard: React.FC = () => {
     const [isConnecting, setIsConnecting] = useState(false);
     const [isLoadingDeviceData, setIsLoadingDeviceData] = useState(false);
     const [connectedDevices, setConnectedDevices] = useState<any[]>([]);
-    const [activeTab, setActiveTab] = useState('messages');
 
     const { getDevices } = useDeviceStore();
     const devices = useMemo(() => getDevices(), [getDevices]);
@@ -209,11 +208,6 @@ const UserDashboard: React.FC = () => {
         }
     };
 
-    const tabs = [
-        { id: 'messages', icon: FiMessageSquare, label: t('messages') },
-        { id: 'nodes', icon: FiRadio, label: t('nodes') }
-    ];
-
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900">
             <Menu
@@ -223,24 +217,6 @@ const UserDashboard: React.FC = () => {
             />
 
             <div className="container mx-auto py-6 px-4 max-w-7xl space-y-6">
-                {/* Navigation Tabs */}
-                <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                                activeTab === tab.id
-                                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-                            }`}
-                        >
-                            <tab.icon className="w-4 h-4" />
-                            {tab.label}
-                        </button>
-                    ))}
-                </div>
-
                 {/* Pokaż kartę ładowania/informacyjną gdy nie ma urządzeń lub są w trakcie ładowania */}
                 {showLoader ? (
                     <Card>
@@ -280,142 +256,7 @@ const UserDashboard: React.FC = () => {
                             </div>
                         </div>
                     </Card>
-                ) : (
-                    <>
-                        {activeTab === 'messages' && (
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Panel główny */}
-                                <div className="lg:col-span-2">
-                                    <Card variant="default" className="bg-white dark:bg-gray-800">
-                                        <div className="p-4">
-                                            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                                                {t("messages")}
-                                            </h2>
-                                            <div className="space-y-4">
-                                                {messages.map((message) => (
-                                                    <div
-                                                        key={message.id}
-                                                        className={`p-4 rounded-lg ${
-                                                            message.isFromAdmin
-                                                                ? "bg-blue-50 dark:bg-blue-900/20"
-                                                                : "bg-gray-50 dark:bg-gray-700/50"
-                                                        }`}
-                                                    >
-                                                        <div className="flex justify-between items-start mb-2">
-                                                            <Badge
-                                                                variant={message.isFromAdmin ? "blue" : "green"}
-                                                            >
-                                                                {message.isFromAdmin ? t("admin") : t("you")}
-                                                            </Badge>
-                                                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                                                                {new Date(message.timestamp).toLocaleString()}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-gray-700 dark:text-gray-300 mb-2">
-                                                            {message.content}
-                                                        </p>
-                                                        {message.isFromAdmin && (
-                                                            <Button
-                                                                variant="secondary"
-                                                                size="sm"
-                                                                onClick={() => speakMessage(message.content)}
-                                                                disabled={isSpeaking}
-                                                            >
-                                                                <FiVolume2 className="mr-2" />
-                                                                {isSpeaking ? t("speaking") : t("readAloud")}
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </Card>
-                                </div>
-
-                                {/* Panel boczny */}
-                                <div className="lg:col-span-1">
-                                    <Card variant="default" className="bg-white dark:bg-gray-800">
-                                        <div className="p-4">
-                                            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                                                {t("sendMessage")}
-                                            </h3>
-                                            <div className="space-y-4">
-                                                <textarea
-                                                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                                    rows={4}
-                                                    value={newMessage}
-                                                    onChange={(e) => setNewMessage(e.target.value)}
-                                                    placeholder={t("typeMessage")}
-                                                />
-                                                <div className="flex space-x-2">
-                                                    <Button
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        onClick={isRecording ? stopRecording : startRecording}
-                                                    >
-                                                        <FiMic className={`mr-2 ${isRecording ? "text-red-500" : ""}`} />
-                                                        {isRecording ? t("stopRecording") : t("startRecording")}
-                                                    </Button>
-                                                    <Button
-                                                        variant="primary"
-                                                        size="sm"
-                                                        onClick={handleSendMessage}
-                                                        disabled={!newMessage.trim()}
-                                                    >
-                                                        <FiSend className="mr-2" />
-                                                        {t("send")}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                </div>
-                            </div>
-                        )}
-                        {activeTab === 'nodes' && (
-                            <>
-                                <div className="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100">
-                                    <FiRadio className="w-5 h-5" />
-                                    {devices.map((device) => {
-                                        const deviceNode = device.getNode(device.hardware.myNodeNum);
-                                        return (
-                                            <div key={device.id}>
-                                                {t('connected')}: {deviceNode?.user?.longName ?? "UNK"}
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <StatCard
-                                        icon={FiRadio}
-                                        label={t("activeNodes")}
-                                        value={stats.activeNodes}
-                                        helpText={t("totalConnectedNodes")}
-                                    />
-                                    <StatCard
-                                        icon={FiUsers}
-                                        label={t("onlineUsers")}
-                                        value={stats.onlineUsers}
-                                        helpText={t("connectedToNetwork")}
-                                    />
-                                    <StatCard
-                                        icon={FiMessageSquare}
-                                        label={t("pendingMessages")}
-                                        value={stats.pendingMessages}
-                                        helpText={t("unreadMessages")}
-                                    />
-                                    <StatCard
-                                        icon={FiActivity}
-                                        label={t("batteryLvl")}
-                                        value={`${stats.batteryLvl}%`}
-                                        helpText={t("batteryLvlHelp")}
-                                    />
-                                </div>
-                            </>
-                        )}
-                    </>
-                )}
+                ) : null}
 
                 <NewDeviceDialog
                     isOpen={connectDialogOpen}
@@ -423,6 +264,55 @@ const UserDashboard: React.FC = () => {
                     onConnect={handleDeviceConnect}
                     isConnecting={isConnecting}
                 />
+
+                {/* Pokaż interfejs urządzenia tylko gdy urządzenia są w pełni załadowane */}
+                {devices.length > 0 && !showLoader && (
+                    <>
+                        <div className="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+                            <FiRadio className="w-5 h-5" />
+                            {devices.map((device) => {
+                                const deviceNode = device.getNode(device.hardware.myNodeNum);
+                                return (
+                                    <div key={device.id}>
+                                        {t('connected')}: {deviceNode?.user?.longName ?? "UNK"}
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <StatCard
+                                icon={FiRadio}
+                                label={t("activeNodes")}
+                                value={stats.activeNodes}
+                                helpText={t("totalConnectedNodes")}
+                            />
+                            <StatCard
+                                icon={FiUsers}
+                                label={t("onlineUsers")}
+                                value={stats.onlineUsers}
+                                helpText={t("connectedToNetwork")}
+                            />
+                            <StatCard
+                                icon={FiMessageSquare}
+                                label={t("pendingMessages")}
+                                value={stats.pendingMessages}
+                                helpText={t("unreadMessages")}
+                            />
+                            <StatCard
+                                icon={FiActivity}
+                                label={t("batteryLvl")}
+                                value={`${stats.batteryLvl}%`}
+                                helpText={t("batteryLvlHelp")}
+                            />
+                        </div>
+                    </>
+                )}
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <UserMessagesPanel />
+                    <UserMessageTemplatesPanel />
+                </div>
             </div>
 
             <Footer />

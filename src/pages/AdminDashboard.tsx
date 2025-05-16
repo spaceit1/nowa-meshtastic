@@ -1,14 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "../contexts/AuthContext";
-import { useTheme } from "../contexts/ThemeContext";
-import { useAccessibility } from "../contexts/AccessibilityContext";
-import { useLanguage } from "../i18n/LanguageContext";
-import { useModal } from "../hooks/useModal";
-import { useDeviceStore } from "@core/stores/deviceStore";
-import { supabase } from "../lib/supabase";
-import { toast } from "react-hot-toast";
 import {
     FiUsers,
     FiRadio,
@@ -17,26 +7,31 @@ import {
     FiMessageSquare,
     FiList,
     FiDatabase,
-    FiPlus,
-    FiUser,
-    FiInfo
+    FiPlus
 } from "react-icons/fi";
-import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
+import { useLanguage } from "../i18n/LanguageContext";
+import { useModal } from "../hooks/useModal";
+import { useDeviceStore } from "@core/stores/deviceStore";
+
 import Menu from "../components/ui/Menu";
-import { BroadcastPanel } from "../components/panels/BroadcastPanel";
-import { UserMessagesPanel } from "../components/panels/UserMessagesPanel";
-import { NodesPanel } from "../components/panels/NodesPanel";
-import { TemplatesPanel } from "../components/panels/TemplatesPanel";
-import { UserTemplatesPanel } from "../components/panels/UserTemplatesPanel";
-import { LogsPanel } from "../components/panels/LogsPanel";
-import { CategoryPanel } from "../components/panels/CategoryPanel";
+import Footer from "../components/ui/Footer";
+import StatCard from "../components/ui/StatCard";
+import Alert from "../components/ui/Alert";
+import BroadcastPanel from "../components/panels/BroadcastPanel";
+import UserMessagesPanel from "../components/panels/UserMessagesPanel";
+import NodesPanel from "../components/panels/NodesPanel";
+import TemplatesPanel from "../components/panels/TemplatesPanel";
+import LogsPanel from "../components/panels/LogsPanel";
+import CategoryPanel from "../components/panels/CategoryPanel";
 import EditTemplateModal from "../components/modals/EditTemplateModal";
 import DeleteTemplateModal from "../components/modals/DeleteTemplateModal";
 import ViewTemplateModal from "../components/modals/ViewTemplateModal";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import { categories } from "../utils/templateData";
 import NewDeviceDialog from '../components/Dialog/NewDeviceDialog';
 import { Spinner } from "../components/ui/Spinner";
-
+import UserMessageTemplatesPanel from "../components/panels/UserMessageTemplatesPanel";
 // Mock data types
 export interface Node {
     id: string;
@@ -115,8 +110,6 @@ const mockUserRequests: UserRequest[] = [
     },
 ];
 
-// Zakładamy, że templates jest zdefiniowane wcześniej w kodzie
-const templates = []; // Dodaj swoje dane szablonów
 
 const AdminDashboard: React.FC = () => {
     const { t } = useLanguage();
@@ -159,6 +152,7 @@ const AdminDashboard: React.FC = () => {
     // Stan ładowania - pokazujemy loader, gdy urządzenia się łączą lub dane węzła nie są jeszcze dostępne
     const showLoader = isConnecting || (devices.length > 0 && !isNodeLoaded);
 
+    // Monitorowanie stanu ładowania
     // Monitorowanie stanu ładowania
     useEffect(() => {
         if (devices.length > 0 && !isNodeLoaded) {
@@ -325,13 +319,13 @@ const AdminDashboard: React.FC = () => {
     }, [connectDialogOpen]);
 
     const tabs = [
-        { id: 'broadcast', icon: FiRadio, label: t('broadcast') },
-        { id: 'messages', icon: FiMessageSquare, label: t('messages') },
-        { id: 'nodes', icon: FiActivity, label: t('nodes') },
-        { id: 'templates', icon: FiList, label: t('templates') },
-        { id: 'userTemplates', icon: FiUser, label: t('userTemplates') },
-        { id: 'categories', icon: FiList, label: t('categories') },
-        { id: 'logs', icon: FiInfo, label: t('logs') }
+        { icon: FiSend, label: t("broadcast") },
+        { icon: FiMessageSquare, label: t("userMessages") },
+        { icon: FiRadio, label: t("nodes") },
+        { icon: FiList, label: t("templates") },
+        { icon: FiList, label: t("userMessagesTemplates") },
+        { icon: FiDatabase, label: t("logs") },
+        { icon: FiList, label: t("categories") },
     ];
 
     return (
@@ -496,25 +490,19 @@ const AdminDashboard: React.FC = () => {
                             )}
 
                             {currentTab === 3 && (
-                                <TemplatesPanel
-                                    templates={templates}
-                                    handleAddNewTemplate={handleAddNewTemplate}
-                                    handleViewTemplate={handleViewTemplate}
-                                    handleEditTemplate={handleEditTemplate}
-                                    handleDeleteTemplate={handleDeleteTemplate}
-                                />
+                                    <TemplatesPanel />
                             )}
 
                             {currentTab === 4 && (
-                                <UserTemplatesPanel />
+                                <UserMessageTemplatesPanel />
                             )}
 
                             {currentTab === 5 && (
-                                <CategoryPanel />
+                                <LogsPanel />
                             )}
 
                             {currentTab === 6 && (
-                                <LogsPanel />
+                                <CategoryPanel />
                             )}
                         </div>
                     </div>
