@@ -30,6 +30,7 @@ import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import { categories } from "../utils/templateData";
 import NewDeviceDialog from '../components/Dialog/NewDeviceDialog';
+import { Spinner } from "../components/ui/Spinner";
 // Mock data types
 export interface Node {
     id: string;
@@ -108,6 +109,9 @@ const mockUserRequests: UserRequest[] = [
     },
 ];
 
+// Zakładamy, że templates jest zdefiniowane wcześniej w kodzie
+const templates = []; // Dodaj swoje dane szablonów
+
 const AdminDashboard: React.FC = () => {
     const { t } = useLanguage();
     const [broadcastMessage, setBroadcastMessage] = useState("");
@@ -122,6 +126,7 @@ const AdminDashboard: React.FC = () => {
     const [selectedPort, setSelectedPort] = useState<string>("");
     const [availablePorts, setAvailablePorts] = useState<string[]>([]);
     const [isConnecting, setIsConnecting] = useState(false);
+    const [isLoadingDeviceData, setIsLoadingDeviceData] = useState(false);
     const [connectedDevices, setConnectedDevices] = useState<any[]>([]);
 
     // Modal hooks
@@ -136,36 +141,106 @@ const AdminDashboard: React.FC = () => {
     const { getDevices } = useDeviceStore();
     const devices = useMemo(() => getDevices(), [getDevices]);
 
-    // Odświeżanie statystyk po zamknięciu dialogu połączenia
+    // Sprawdź, czy myNode jest prawidłowo załadowany
     const myNode = devices.length > 0
-        ? (devices[0] ? devices[0].getNode(devices[0].hardware?.myNodeNum) : {})
-        : {};
+        ? (devices[0]?.getNode ? devices[0].getNode(devices[0].hardware?.myNodeNum) : null)
+        : null;
 
-    // Odświeżanie statystyk po zamknięciu dialogu połączenia
+    // Najpierw sprawdzamy, czy faktycznie mamy załadowany węzeł z danymi
+    const isNodeLoaded = myNode && myNode.user && myNode.user.longName;
+
+    // Stan ładowania - pokazujemy loader, gdy urządzenia się łączą lub dane węzła nie są jeszcze dostępne
+    const showLoader = isConnecting || (devices.length > 0 && !isNodeLoaded);
+
+    // Monitorowanie stanu ładowania
+    // Monitorowanie stanu ładowania
+    useEffect(() => {
+        if (devices.length > 0 && !isNodeLoaded) {
+            // Urządzenia są, ale dane węzła jeszcze się ładują
+            setIsLoadingDeviceData(true);
+            console.log("Device data is loading");
+
+            // Dodaj polling, który będzie sprawdzał stan co sekundę
+            const intervalId = setInterval(() => {
+                // Pobierz aktualne urządzenia
+                const updatedDevices = getDevices();
+                if (updatedDevices.length > 0) {
+                    const device = updatedDevices[0];
+                    const node = device?.getNode ? device.getNode(device.hardware?.myNodeNum) : null;
+                    const nodeFullyLoaded = node && node.user && node.user.longName;
+
+                    if (nodeFullyLoaded) {
+                        // Dane węzła zostały załadowane
+                        setIsLoadingDeviceData(false);
+                        setIsConnecting(false);
+                        console.log("Device data is loaded (from polling)");
+                        clearInterval(intervalId);
+                    }
+                }
+            }, 1000); // Sprawdzaj co 1000ms (1 sekunda)
+
+            // Wyczyść interval przy odmontowaniu komponentu
+            return () => clearInterval(intervalId);
+        } else if (devices.length > 0 && isNodeLoaded) {
+            // Urządzenia i dane węzła są załadowane
+            setIsLoadingDeviceData(false);
+            setIsConnecting(false);
+            console.log("Device data is loaded");
+        }
+    }, [devices, isNodeLoaded, getDevices]);
+
+    // Sprawdź zmiany w urządzeniach po zamknięciu dialogu
     useEffect(() => {
         if (!connectDialogOpen) {
             const updatedDevices = getDevices();
             setConnectedDevices(updatedDevices);
+
+            if (updatedDevices.length > 0) {
+                // Sprawdź czy dane węzła są dostępne
+                const device = updatedDevices[0];
+                const node = device?.getNode ? device.getNode(device.hardware?.myNodeNum) : null;
+                setIsLoadingDeviceData(!node || !node.user || !node.user.longName);
+            }
+
             console.log(updatedDevices);
         }
     }, [connectDialogOpen, getDevices]);
 
     const stats = {
-        activeNodes: devices.length > 0 ? (devices[0].getNodesLength ? devices[0].getNodesLength() : 0) : 0,
-        onlineUsers: devices.length > 0 ? ((devices[0].getNodesLength ? devices[0].getNodesLength() : 1) - 1) : 0,
+        activeNodes: devices.length > 0 ? (devices[0]?.getNodesLength ? devices[0].getNodesLength() : 0) : 0,
+        onlineUsers: devices.length > 0 ? ((devices[0]?.getNodesLength ? devices[0].getNodesLength() : 1) - 1) : 0,
         pendingMessages: 8, // TODO: Implement real pending messages count
-        batteryAvg: devices.length > 0 ? myNode?.deviceMetrics?.batteryLevel ?? 0 : 0,
+        batteryAvg: myNode?.deviceMetrics?.batteryLevel ?? 0,
     };
-
-    if (devices.length > 0) {
-        console.log(myNode?.user);
-    }
 
     // Load mockMessages on mount
     useEffect(() => {
         // In a real app, this would be an API call
         console.log("Loading user requests...");
     }, []);
+
+    const handleStartConnect = () => {
+        console.log("Starting connect");
+        setIsConnecting(true);
+        setConnectDialogOpen(true);
+    };
+
+    const handleDeviceConnect = (device: any) => {
+        console.log("Device connected");
+        setConnectedDevices(prev => [...prev, device]);
+        setIsLoadingDeviceData(true);
+        setConnectDialogOpen(false);
+    };
+
+    const handleCloseDialog = () => {
+        console.log("Dialog closed");
+        setConnectDialogOpen(false);
+
+        // Jeśli zamknięto dialog bez połączenia, resetujemy stan łączenia
+        if (devices.length === 0) {
+            setIsConnecting(false);
+        }
+    };
 
     const handleBroadcast = () => {
         console.log("Broadcasting message:", broadcastMessage);
@@ -228,11 +303,6 @@ const AdminDashboard: React.FC = () => {
         }
     }, [connectDialogOpen]);
 
-    const handleDeviceConnect = (device: any) => {
-        setConnectedDevices(prev => [...prev, device]);
-        setConnectDialogOpen(false);
-    };
-
     const tabs = [
         { icon: FiSend, label: t("broadcast") },
         { icon: FiMessageSquare, label: t("userMessages") },
@@ -251,46 +321,64 @@ const AdminDashboard: React.FC = () => {
             />
 
             <div className="container mx-auto py-6 px-4 max-w-7xl space-y-6">
-                {devices.length === 0 && (
-                    <>
-                        <Card>
-                            <div className="m-auto flex flex-col gap-3 text-center p-4">
-                                <FiList
-                                    size={48}
-                                    className="mx-auto text-gray-400 dark:text-gray-500"
-                                />
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                    {t('noDevices')}
-                                </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {t('connectAtLeastOneDevice')}
-                                </p>
-                                <div className="flex justify-center mt-4">
-                                    <Button onClick={() => setConnectDialogOpen(true)} icon={FiPlus}>
-                                        {t('newConnection')}
-                                    </Button>
-                                </div>
+                {/* Pokaż kartę ładowania/informacyjną gdy nie ma urządzeń lub są w trakcie ładowania */}
+                {showLoader ? (
+                    <Card>
+                        <div className="m-auto flex flex-col gap-3 text-center p-4">
+                            <div className="flex justify-center items-center py-4">
+                                <Spinner />
                             </div>
-                        </Card>
-                    </>
-                )}
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                {isLoadingDeviceData
+                                    ? (t('loadingDeviceData') || 'Loading device data...')
+                                    : (t('connecting') || 'Connecting to device...')}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {isLoadingDeviceData
+                                    ? (t('configuringDevice') || 'Configuring device, please wait...')
+                                    : (t('pleaseWait') || 'Please wait, establishing connection...')}
+                            </p>
+                        </div>
+                    </Card>
+                ) : devices.length === 0 ? (
+                    <Card>
+                        <div className="m-auto flex flex-col gap-3 text-center p-4">
+                            <FiList
+                                size={48}
+                                className="mx-auto text-gray-400 dark:text-gray-500"
+                            />
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                {t('noDevices')}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {t('connectAtLeastOneDevice')}
+                            </p>
+                            <div className="flex justify-center mt-4">
+                                <Button onClick={handleStartConnect} icon={FiPlus}>
+                                    {t('newConnection')}
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                ) : null}
 
                 <NewDeviceDialog
                     isOpen={connectDialogOpen}
-                    onClose={() => setConnectDialogOpen(false)}
+                    onClose={handleCloseDialog}
                     onConnect={handleDeviceConnect}
+                    isConnecting={isConnecting}
                 />
 
-
-                {devices.length > 0 && (
+                {/* Pokaż interfejs urządzenia tylko gdy urządzenia są w pełni załadowane */}
+                {devices.length > 0 && !showLoader && (
                     <>
                         <div className="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100">
                             <FiRadio className="w-5 h-5" />
                             {devices.map((device) => {
-                                const myNode = device.getNode(device.hardware.myNodeNum);
+                                const deviceNode = device.getNode(device.hardware.myNodeNum);
                                 return (
                                     <div key={device.id}>
-                                        {t('connected')}: {myNode?.user?.longName ?? "UNK"}
+                                        {t('connected')}: {deviceNode?.user?.longName ?? "UNK"}
                                     </div>
                                 )
                             })}
@@ -331,77 +419,80 @@ const AdminDashboard: React.FC = () => {
                     title={t("warningTitleOnAdminDashboard") || "The battery level of the Eastern Hospital node is critically low (23%). Please replace or recharge."}
                 />
 
-                <div className="bg-white dark:bg-gray-800 rounded-md shadow-sm">
-                    {/* Tab List */}
-                    <div className="mb-4 overflow-x-auto flex border-b border-gray-200 dark:border-gray-700 scrollbar-thin">
-                        {tabs.map((tab, index) => (
-                            <button
-                                key={index}
-                                className={`px-4 py-2 flex items-center whitespace-nowrap ${currentTab === index
-                                    ? "border-b-2 border-purple-500 text-purple-600 dark:text-purple-400"
-                                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                                    }`}
-                                onClick={() => setCurrentTab(index)}
-                            >
-                                <tab.icon className="mr-2 w-4 h-4" />
-                                {tab.label}
-                            </button>
-                        ))}
+                {/* Pokaż interfejs zakładek tylko gdy urządzenia są w pełni załadowane */}
+                {devices.length > 0 && !showLoader && (
+                    <div className="bg-white dark:bg-gray-800 rounded-md shadow-sm">
+                        {/* Tab List */}
+                        <div className="mb-4 overflow-x-auto flex border-b border-gray-200 dark:border-gray-700 scrollbar-thin">
+                            {tabs.map((tab, index) => (
+                                <button
+                                    key={index}
+                                    className={`px-4 py-2 flex items-center whitespace-nowrap ${currentTab === index
+                                        ? "border-b-2 border-purple-500 text-purple-600 dark:text-purple-400"
+                                        : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                                        }`}
+                                    onClick={() => setCurrentTab(index)}
+                                >
+                                    <tab.icon className="mr-2 w-4 h-4" />
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Tab Panels */}
+                        <div className="p-4">
+                            {currentTab === 0 && (
+                                <BroadcastPanel
+                                    messageTitle={messageTitle}
+                                    setMessageTitle={setMessageTitle}
+                                    messageCategory={messageCategory}
+                                    setMessageCategory={setMessageCategory}
+                                    messagePriority={messagePriority}
+                                    setMessagePriority={setMessagePriority}
+                                    targetAudience={targetAudience}
+                                    setTargetAudience={setTargetAudience}
+                                    broadcastMessage={broadcastMessage}
+                                    setBroadcastMessage={setBroadcastMessage}
+                                    handleBroadcast={handleBroadcast}
+                                    categories={categories}
+                                />
+                            )}
+
+                            {currentTab === 1 && (
+                                <UserMessagesPanel
+                                    userRequests={userRequests}
+                                    selectedRequests={selectedRequests}
+                                    handleRequestSelect={handleRequestSelect}
+                                    handleUpdateRequestStatus={handleUpdateRequestStatus}
+                                    setSelectedRequests={setSelectedRequests}
+                                    categories={categories}
+                                />
+                            )}
+
+                            {currentTab === 2 && (
+                                <NodesPanel />
+                            )}
+
+                            {currentTab === 3 && (
+                                <TemplatesPanel
+                                    templates={templates}
+                                    handleAddNewTemplate={handleAddNewTemplate}
+                                    handleViewTemplate={handleViewTemplate}
+                                    handleEditTemplate={handleEditTemplate}
+                                    handleDeleteTemplate={handleDeleteTemplate}
+                                />
+                            )}
+
+                            {currentTab === 4 && (
+                                <LogsPanel />
+                            )}
+
+                            {currentTab === 5 && (
+                                <CategoryPanel />
+                            )}
+                        </div>
                     </div>
-
-                    {/* Tab Panels */}
-                    <div className="p-4">
-                        {currentTab === 0 && (
-                            <BroadcastPanel
-                                messageTitle={messageTitle}
-                                setMessageTitle={setMessageTitle}
-                                messageCategory={messageCategory}
-                                setMessageCategory={setMessageCategory}
-                                messagePriority={messagePriority}
-                                setMessagePriority={setMessagePriority}
-                                targetAudience={targetAudience}
-                                setTargetAudience={setTargetAudience}
-                                broadcastMessage={broadcastMessage}
-                                setBroadcastMessage={setBroadcastMessage}
-                                handleBroadcast={handleBroadcast}
-                                categories={categories}
-                            />
-                        )}
-
-                        {currentTab === 1 && (
-                            <UserMessagesPanel
-                                userRequests={userRequests}
-                                selectedRequests={selectedRequests}
-                                handleRequestSelect={handleRequestSelect}
-                                handleUpdateRequestStatus={handleUpdateRequestStatus}
-                                setSelectedRequests={setSelectedRequests}
-                                categories={categories}
-                            />
-                        )}
-
-                        {currentTab === 2 && (
-                            <NodesPanel />
-                        )}
-
-                        {currentTab === 3 && (
-                            <TemplatesPanel
-                                templates={templates}
-                                handleAddNewTemplate={handleAddNewTemplate}
-                                handleViewTemplate={handleViewTemplate}
-                                handleEditTemplate={handleEditTemplate}
-                                handleDeleteTemplate={handleDeleteTemplate}
-                            />
-                        )}
-
-                        {currentTab === 4 && (
-                            <LogsPanel />
-                        )}
-
-                        {currentTab === 5 && (
-                            <CategoryPanel />
-                        )}
-                    </div>
-                </div>
+                )}
             </div>
 
             <Footer />

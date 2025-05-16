@@ -7,10 +7,9 @@ import { FiGlobe } from 'react-icons/fi';
 import { MeshDevice } from "@meshtastic/core";
 import { TransportHTTP } from "@meshtastic/transport-http";
 import { useAppStore } from "@core/stores/appStore.ts";
-import { useDevice, useDeviceStore } from "@core/stores/deviceStore.ts";
+import { useDeviceStore } from "@core/stores/deviceStore.ts";
 import { subscribeAll } from "@core/subscriptions.ts";
 import { randId } from "@core/utils/randId.ts";
-import { useController, useForm } from "react-hook-form";
 import { useMessageStore } from "@core/stores/messageStore";
 
 export interface TabElementProps {
@@ -24,53 +23,67 @@ interface FormData {
 
 const HTTP = ({ closeDialog }: TabElementProps) => {
     const { t } = useLanguage();
-    const [ip, setIp] = useState('meshtastic.local');
-    const [tls, setTls] = useState(location.protocol === 'https:');
+    const [ip, setIp] = useState(
+        ["client.meshtastic.org", "localhost"].includes(
+            window.location.hostname
+        )
+            ? "meshtastic.local"
+            : window.location.host
+    );
+    const [tls, setTls] = useState(window.location.protocol === 'https:');
     const [connectionInProgress, setConnectionInProgress] = useState(false);
-    const isURLHTTPS = location.protocol === "https:";
+    const isURLHTTPS = window.location.protocol === "https:";
 
     const { addDevice } = useDeviceStore();
-    // const { getNode } = useDevice();
     const messageStore = useMessageStore();
     const { setSelectedDevice } = useAppStore();
-
-    const { control, handleSubmit, register } = useForm<FormData>({
-        defaultValues: {
-            ip: ["client.meshtastic.org", "localhost"].includes(
-                globalThis.location.hostname,
-            )
-                ? "meshtastic.local"
-                : globalThis.location.host,
-            tls: isURLHTTPS ? true : false,
-        },
-    });
-
-    useController({ name: "tls", control });
 
     const [connectionError, setConnectionError] = useState<
         { host: string; secure: boolean } | null
     >(null);
 
-    const onSubmit = handleSubmit(async (data) => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setConnectionInProgress(true);
         setConnectionError(null);
 
         try {
+            console.log(`Connecting to ${tls ? 'https' : 'http'}://${ip}...`);
+            
+            // Generate a unique ID for this connection
             const id = randId();
-            const transport = await TransportHTTP.create(data.ip, data.tls);
+            
+            // Create the HTTP transport
+            const transport = await TransportHTTP.create(ip, tls);
+            
+            // Add the device to the store first
             const device = addDevice(id);
+            
+            // Create the Meshtastic device with this transport
             const connection = new MeshDevice(transport, id);
+            
+            // Configure the device - this starts the connection process
+            console.log("Configuring device...");
             connection.configure();
+            
+            // Set as selected device
             setSelectedDevice(id);
+            
+            // Add the connection to the device
             device.addConnection(connection);
+            
+            // Subscribe to all events
             subscribeAll(device, connection, messageStore);
+            
+            // Close the dialog
+            console.log("Connection successful, closing dialog");
             closeDialog();
         } catch (error) {
             console.error("Connection error:", error);
-            setConnectionError({ host: data.ip, secure: data.tls });
+            setConnectionError({ host: ip, secure: tls });
             setConnectionInProgress(false);
         }
-    });
+    };
 
     return (
         <div className="space-y-4">
@@ -100,7 +113,7 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
                 </Alert>
             )}
 
-            <form onSubmit={onSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
                     label={t('ipAddress')}
                     value={ip}
@@ -122,7 +135,7 @@ const HTTP = ({ closeDialog }: TabElementProps) => {
                         className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                         checked={tls}
                         onChange={(e) => setTls(e.target.checked)}
-                        disabled={location.protocol === 'https:'}
+                        disabled={window.location.protocol === 'https:'}
                     />
                     <label htmlFor="tls" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         {t('useHttps')}
